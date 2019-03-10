@@ -1,0 +1,15 @@
+{
+  "name": "telegram-test-charts",
+  "version": "1.0.0",
+  "main": "elm.js",
+  "dependencies": {
+    "chokidar-cli": "^1.2.1"
+  },
+  "devDependencies": {
+    "elm": "0.19"
+  },
+  "scripts": {
+    "watch": "SHELL=/bin/bash chokidar '**/*.elm' -c 'elm make src/Main.elm --output=../dist/elm.js --debug' --initial"
+  },
+  "author": "Evgeny Kots"
+}
