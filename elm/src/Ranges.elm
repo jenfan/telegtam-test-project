@@ -1,17 +1,23 @@
-module Ranges exposing (Range, XYRanges, init, xyRanges)
-
-import Lines exposing (Line)
+module Ranges exposing (Range, ScaleRatio, Size, XYRanges, init)
 
 
 type alias Range =
-    ( Int, Int )
+    ( Float, Float )
+
+
+type alias Size =
+    ( Float, Float )
+
+
+type alias ScaleRatio =
+    ( Float, Float )
 
 
 type alias XYRanges =
     ( Range, Range )
 
 
-init : Maybe Int -> Maybe Int -> Maybe Range
+init : Maybe Float -> Maybe Float -> Maybe Range
 init maybeMin maybeMax =
     case maybeMin of
         Just min ->
@@ -24,52 +30,3 @@ init maybeMin maybeMax =
 
         _ ->
             Nothing
-
-
-xyRanges : List Line -> Maybe XYRanges
-xyRanges lines =
-    case xRange lines of
-        Just xRange_ ->
-            case yRange lines of
-                Just yRange_ ->
-                    Just ( xRange_, yRange_ )
-
-                _ ->
-                    Nothing
-
-        _ ->
-            Nothing
-
-
-xRange : List Line -> Maybe Range
-xRange lines =
-    let
-        xList =
-            lines
-                |> List.concat
-                |> List.map (\( x, _ ) -> x)
-
-        xMin =
-            List.minimum xList
-
-        xMax =
-            List.maximum xList
-    in
-    init xMin xMax
-
-
-yRange : List Line -> Maybe Range
-yRange lines =
-    let
-        yList =
-            lines
-                |> List.concat
-                |> List.map (\( _, y ) -> y)
-
-        yMin =
-            List.minimum yList
-
-        yMax =
-            List.maximum yList
-    in
-    init yMin yMax
