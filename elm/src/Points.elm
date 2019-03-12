@@ -1,6 +1,7 @@
-module Points exposing (Point, new, to_s, transform)
+module Points exposing (Point, normalCordinates, render, toString)
 
 import Ranges exposing (Size, XYRanges)
+import Transforms exposing (Scale, Transform, Translate)
 
 
 type alias Point =
@@ -11,30 +12,29 @@ type alias RangePosition =
     ( Float, Float )
 
 
-new : ( Float, Float ) -> Point
-new ( x, y ) =
-    ( x, y )
-
-
-to_s : Point -> String
-to_s ( x, y ) =
-    String.fromFloat x ++ "," ++ String.fromFloat y ++ " "
-
-
-transform : Size -> XYRanges -> Point -> Point
-transform size xyRanges point =
+render : Transform -> Size -> Point -> Point
+render transform ( _, height ) point =
     point
-        |> rangePosition xyRanges
-        |> scale size
+        |> scale transform.scale
+        --|> translate transform.translate
+        |> normalCordinates height
 
 
-rangePosition : XYRanges -> Point -> RangePosition
-rangePosition ( ( minX, maxX ), ( minY, maxY ) ) ( x, y ) =
-    ( (x - minX) / (maxX - minX)
-    , (y - minY) / (maxY - minY)
-    )
+scale : Scale -> Point -> Point
+scale ( scaleX, scaleY ) ( x, y ) =
+    ( scaleX * x, scaleY * y )
 
 
-scale : Size -> RangePosition -> Point
-scale ( w, h ) ( xPos, yPos ) =
-    ( w * xPos, h * yPos )
+translate : Translate -> Point -> Point
+translate ( trX, trY ) ( x, y ) =
+    ( x + trX, y + trY )
+
+
+normalCordinates : Float -> Point -> Point
+normalCordinates height ( x, y ) =
+    ( x, height - y )
+
+
+toString : Point -> String
+toString ( x, y ) =
+    String.fromFloat x ++ "," ++ String.fromFloat y

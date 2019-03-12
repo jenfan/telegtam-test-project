@@ -1,49 +1,25 @@
-module Lines exposing (Line, calcRanges, drawLine, initModel1, initModel2, title, to_s)
+module Lines exposing (Line, draw, title, toString, valuesRange)
 
 import Points exposing (Point)
 import Ranges exposing (Range, Size, XYRanges)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
+import Transforms exposing (Transform)
+import Tuples
 
 
 type alias Line =
     { points : List Point
     , active : Bool
     , id : Int
+    , color : String
     }
 
 
-initModel1 : Line
-initModel1 =
-    { points =
-        [ ( 0, 120 )
-        , ( 20, 125 )
-        , ( 10, 275 )
-        , ( 200, 110 )
-        , ( 420, 212 )
-        ]
-    , active = True
-    , id = 1
-    }
-
-
-initModel2 : Line
-initModel2 =
-    { points =
-        [ ( 2, 34 )
-        , ( 20, 423 )
-        , ( 140, 123 )
-        , ( 280, 321 )
-        , ( 430, 45 )
-        ]
-    , active = True
-    , id = 2
-    }
-
-
-to_s : Line -> String
-to_s line =
-    List.map Points.to_s line.points
+toString : Line -> String
+toString { points } =
+    points
+        |> List.map Points.toString
         |> String.join " "
 
 
@@ -52,80 +28,79 @@ title line =
     "Toggle " ++ String.fromInt line.id
 
 
-drawLine : Size -> XYRanges -> Line -> Svg msg
-drawLine size xyRanges line =
-    line
-        |> scale size xyRanges
-        |> view
-
-
-scale : Size -> XYRanges -> Line -> Line
-scale size xyRanges line =
-    let
-        points =
-            line.points
-                |> List.map (Points.transform size xyRanges)
-    in
-    { line | points = points }
-
-
-view : Line -> Svg msg
-view line =
+draw : Transform -> Size -> Line -> Svg msg
+draw transform_ size line =
     Svg.polyline
-        [ to_s line |> points
+        [ pointsAttr transform_ size line
         , fill "none"
-        , stroke "black"
+        , stroke line.color
         , strokeWidth "3"
+        , transform <| Transforms.translateAttr transform_
+
+        --, transform <| Transforms.scaleAttr transform_
+        --, transform <| Transforms.scaleAndTranslateAttr transform_
+        , class "translate"
+        , activeClass line
+        , id <| String.fromInt line.id
         ]
         []
 
 
-calcRanges : List Line -> Maybe XYRanges
-calcRanges lines =
-    case xRange lines of
-        Just xRange_ ->
-            case yRange lines of
-                Just yRange_ ->
-                    Just ( xRange_, yRange_ )
-
-                _ ->
-                    Nothing
-
-        _ ->
-            Nothing
+pointsAttr : Transform -> Size -> Line -> Attribute msg
+pointsAttr transform size line =
+    line.points
+        |> List.map (Points.render transform size)
+        |> List.map Points.toString
+        |> String.join " "
+        |> Svg.Attributes.points
 
 
-xRange : List Line -> Maybe Range
-xRange lines =
+animate { scale } =
+    animateTransform
+        [ attributeName "transform"
+        , type_ "scale"
+
+        --, from "1 1"
+        , to <| Tuples.joinWithSpace scale
+        , begin "0s"
+        , dur "0.85s"
+        , repeatCount "1"
+        ]
+        []
+
+
+activeClass line =
+    if line.active then
+        class ""
+
+    else
+        class "none"
+
+
+valuesRange : List Line -> Maybe XYRanges
+valuesRange lines =
     let
-        xList =
-            lines
-                |> List.map .points
-                |> List.concat
-                |> List.map (\( x, _ ) -> x)
+        ( xList, yList ) =
+            splitToAxes lines
 
         xMin =
             List.minimum xList
 
-        xMax =
-            List.maximum xList
-    in
-    Ranges.init xMin xMax
-
-
-yRange : List Line -> Maybe Range
-yRange lines =
-    let
-        yList =
-            lines
-                |> List.map .points
-                |> List.concat
-                |> List.map (\( _, y ) -> y)
-
         yMin =
             List.minimum yList
+
+        xMax =
+            List.maximum xList
 
         yMax =
             List.maximum yList
     in
-    Ranges.init yMin yMax
+    Ranges.init xMin xMax yMin yMax
+
+
+splitToAxes : List Line -> ( List Float, List Float )
+splitToAxes lines =
+    lines
+        |> List.map .points
+        |> List.concat
+        |> List.unzip

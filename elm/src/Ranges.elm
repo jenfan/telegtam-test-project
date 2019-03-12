@@ -1,4 +1,4 @@
-module Ranges exposing (Range, ScaleRatio, Size, XYRanges, init)
+module Ranges exposing (Range, Size, XYRanges, init, width)
 
 
 type alias Range =
@@ -9,24 +9,35 @@ type alias Size =
     ( Float, Float )
 
 
-type alias ScaleRatio =
-    ( Float, Float )
-
-
 type alias XYRanges =
     ( Range, Range )
 
 
-init : Maybe Float -> Maybe Float -> Maybe Range
-init maybeMin maybeMax =
-    case maybeMin of
-        Just min ->
-            case maybeMax of
-                Just max ->
-                    Just ( min, max )
+init : Maybe Float -> Maybe Float -> Maybe Float -> Maybe Float -> Maybe XYRanges
+init maybeMinX maybeMaxX maybeMinY maybeMaxY =
+    case maybeMinX of
+        Just minX ->
+            case maybeMaxX of
+                Just maxX ->
+                    case maybeMinY of
+                        Just minY ->
+                            case maybeMaxY of
+                                Just maxY ->
+                                    Just ( ( minX, maxX ), ( minY, maxY ) )
 
-                _ ->
+                                Nothing ->
+                                    Nothing
+
+                        Nothing ->
+                            Nothing
+
+                Nothing ->
                     Nothing
 
-        _ ->
+        Nothing ->
             Nothing
+
+
+width : Range -> Float
+width ( a, b ) =
+    b - a

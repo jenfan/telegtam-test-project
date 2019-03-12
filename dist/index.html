@@ -3,6 +3,21 @@
 <head>
   <title>telegram test charts</title>
   <script type="text/javascript" src="./elm.js"></script>
+  <style type="text/css">
+    .translate {
+      transition: transform .5s ease;
+    }
+    .scale {
+      transition: opacity ease 1s, transform .5s ease;
+      /*transition: visibility 0s, opacity 0.5s linear;*/
+      /*transition-property: visibility, transform;*/
+      /*transition-duration: 1s;*/
+      opacity: 1;
+    }
+    .none {
+      opacity: 0;
+    }
+  </style>
 </head>
 <body>
   <div id="elm"></div>

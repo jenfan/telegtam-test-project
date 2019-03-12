@@ -1,10 +1,11 @@
 module Main exposing (main)
 
 import Browser exposing (..)
+import Data exposing (initModels)
 import Grids exposing (Grid)
-import Html exposing (Html, div)
-import Lines exposing (Line, initModel1, initModel2)
-import Points exposing (Point, new)
+import Html exposing (Html, br, div)
+import Lines exposing (Line)
+import Points exposing (Point)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 
@@ -15,12 +16,15 @@ type Msg
 
 init : () -> ( Grid, Cmd Msg )
 init _ =
-    ( Grids.init ( 1000, 500 ) [ initModel1, initModel2 ], Cmd.none )
+    ( Grids.init ( 100, 100 ) initModels, Cmd.none )
 
 
 view : Grid -> List (Html Msg)
 view grid =
-    [ Html.map GridMsg <| Grids.view grid
+    [ br [] []
+    , br [] []
+    , br [] []
+    , Html.map GridMsg <| Grids.view grid
     , viewLineButtons grid.lines
     ]
 

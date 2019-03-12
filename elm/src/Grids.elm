@@ -3,24 +3,31 @@ module Grids exposing (Grid, Msg, init, update, view, viewLineButton)
 import Html exposing (Html, button, div)
 import Html.Events exposing (onClick)
 import Lines exposing (Line)
-import Ranges exposing (Range, ScaleRatio, Size, XYRanges)
+import Ranges exposing (Range, Size, XYRanges)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
+import Transforms exposing (Transform)
 
 
 type alias Grid =
     { size : Size
     , rowsNum : Int
     , xyRanges : Maybe XYRanges
+    , transform : Transform
     , lines : List Line
     }
 
 
 init : Size -> List Line -> Grid
 init size lines =
+    let
+        xyRanges =
+            Lines.valuesRange lines
+    in
     { size = size
     , rowsNum = 6
-    , xyRanges = Lines.calcRanges lines
+    , xyRanges = xyRanges
+    , transform = Transforms.calcTransform size xyRanges
     , lines = lines
     }
 
@@ -44,27 +51,36 @@ update msg grid =
 
                 lines =
                     List.map updateLine grid.lines
+
+                xyRanges =
+                    Lines.valuesRange <| List.filter .active lines
             in
             { grid
                 | lines = lines
-                , xyRanges = Lines.calcRanges <| List.filter .active lines
+                , xyRanges = xyRanges
+                , transform = Transforms.calcTransform grid.size xyRanges
             }
 
 
 view : Grid -> Html Msg
 view grid =
-    case grid.xyRanges of
-        Just xyRanges ->
-            svg
-                [ width <| String.fromFloat <| Tuple.first <| grid.size
-                , height <| String.fromFloat <| Tuple.second <| grid.size
-                ]
-                [ drawAxes grid.size
-                , drawLines grid.lines grid.size xyRanges
-                ]
+    --case grid.xyRanges of
+    --Just xyRanges ->
+    svg
+        [ heightAttr grid.size
+        , widthAttr grid.size
+        , viewBox "0 0 100 100"
 
-        Nothing ->
-            svg [] []
+        --, viewBox <| Transforms.viewbox grid.xyRanges grid.size
+        ]
+        [ drawAxes grid.size
+        , drawLines grid.lines grid.transform grid.size
+        ]
+
+
+
+--Nothing ->
+--    svg [] []
 
 
 viewLineButton : Line -> Html Msg
@@ -72,12 +88,11 @@ viewLineButton line =
     button [ onClick (ToggleLine line.id) ] [ text <| Lines.title line ]
 
 
-drawLines : List Line -> Size -> XYRanges -> Svg Msg
-drawLines lines size xyRanges =
+drawLines : List Line -> Transform -> Size -> Svg Msg
+drawLines lines transform_ size =
     lines
-        |> List.filter .active
-        |> List.map (Lines.drawLine size xyRanges)
-        |> svg []
+        |> List.map (Lines.draw transform_ size)
+        |> g []
 
 
 drawAxes : Size -> Svg msg
@@ -102,3 +117,13 @@ drawAxes ( width, height ) =
             ]
             []
         ]
+
+
+widthAttr : Size -> Attribute msg
+widthAttr ( w, _ ) =
+    Svg.Attributes.width <| String.fromFloat w
+
+
+heightAttr : Size -> Attribute msg
+heightAttr ( _, h ) =
+    Svg.Attributes.height <| String.fromFloat h
