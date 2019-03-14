@@ -9,7 +9,6 @@ initModels =
             [ ( -100, 50 )
             , ( 100, 50 )
             ]
-      , active = True
       , id = 1
       , color = "green"
       }
@@ -17,7 +16,6 @@ initModels =
             [ ( 100, 0 )
             , ( 300, 0 )
             ]
-      , active = True
       , id = 2
       , color = "red"
       }
@@ -25,7 +23,6 @@ initModels =
             [ ( 200, 75 )
             , ( 300, 75 )
             ]
-      , active = True
       , id = 3
       , color = "blue"
       }
@@ -33,8 +30,8 @@ initModels =
             [ ( 200, 0 )
             , ( 200, 100 )
             ]
-      , active = True
       , id = 4
       , color = "pink"
       }
     ]
+        |> List.map Lines.init

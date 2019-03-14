@@ -4870,10 +4870,11 @@ function _Browser_load(url)
 		}
 	}));
 }
+var author$project$Lines$Line = F5(
+	function (points, nextPoints, active, id, color) {
+		return {active: active, color: color, id: id, nextPoints: nextPoints, points: points};
+	});
 var elm$core$Basics$True = {$: 'True'};
-var elm$core$Basics$negate = function (n) {
-	return -n;
-};
 var elm$core$Basics$EQ = {$: 'EQ'};
 var elm$core$Basics$LT = {$: 'LT'};
 var elm$core$Elm$JsArray$foldr = _JsArray_foldr;
@@ -4954,53 +4955,19 @@ var elm$core$Set$toList = function (_n0) {
 	var dict = _n0.a;
 	return elm$core$Dict$keys(dict);
 };
-var author$project$Data$initModels = _List_fromArray(
-	[
-		{
-		active: true,
-		color: 'green',
-		id: 1,
-		points: _List_fromArray(
-			[
-				_Utils_Tuple2(-100, 50),
-				_Utils_Tuple2(100, 50)
-			])
-	},
-		{
-		active: true,
-		color: 'red',
-		id: 2,
-		points: _List_fromArray(
-			[
-				_Utils_Tuple2(100, 0),
-				_Utils_Tuple2(300, 0)
-			])
-	},
-		{
-		active: true,
-		color: 'blue',
-		id: 3,
-		points: _List_fromArray(
-			[
-				_Utils_Tuple2(200, 75),
-				_Utils_Tuple2(300, 75)
-			])
-	},
-		{
-		active: true,
-		color: 'pink',
-		id: 4,
-		points: _List_fromArray(
-			[
-				_Utils_Tuple2(200, 0),
-				_Utils_Tuple2(200, 100)
-			])
-	}
-	]);
+var author$project$Lines$init = function (_n0) {
+	var points = _n0.points;
+	var id = _n0.id;
+	var color = _n0.color;
+	return A5(author$project$Lines$Line, points, _List_Nil, true, id, color);
+};
 var elm$core$Basics$apR = F2(
 	function (x, f) {
 		return f(x);
 	});
+var elm$core$Basics$negate = function (n) {
+	return -n;
+};
 var elm$core$Basics$add = _Basics_add;
 var elm$core$Basics$gt = _Utils_gt;
 var elm$core$List$foldl = F3(
@@ -5080,17 +5047,6 @@ var elm$core$List$foldr = F3(
 	function (fn, acc, ls) {
 		return A4(elm$core$List$foldrHelper, fn, acc, 0, ls);
 	});
-var elm$core$List$append = F2(
-	function (xs, ys) {
-		if (!ys.b) {
-			return xs;
-		} else {
-			return A3(elm$core$List$foldr, elm$core$List$cons, ys, xs);
-		}
-	});
-var elm$core$List$concat = function (lists) {
-	return A3(elm$core$List$foldr, elm$core$List$append, _List_Nil, lists);
-};
 var elm$core$List$map = F2(
 	function (f, xs) {
 		return A3(
@@ -5105,6 +5061,59 @@ var elm$core$List$map = F2(
 			_List_Nil,
 			xs);
 	});
+var author$project$Data$initModels = A2(
+	elm$core$List$map,
+	author$project$Lines$init,
+	_List_fromArray(
+		[
+			{
+			color: 'green',
+			id: 1,
+			points: _List_fromArray(
+				[
+					_Utils_Tuple2(-100, 50),
+					_Utils_Tuple2(100, 50)
+				])
+		},
+			{
+			color: 'red',
+			id: 2,
+			points: _List_fromArray(
+				[
+					_Utils_Tuple2(100, 0),
+					_Utils_Tuple2(300, 0)
+				])
+		},
+			{
+			color: 'blue',
+			id: 3,
+			points: _List_fromArray(
+				[
+					_Utils_Tuple2(200, 75),
+					_Utils_Tuple2(300, 75)
+				])
+		},
+			{
+			color: 'pink',
+			id: 4,
+			points: _List_fromArray(
+				[
+					_Utils_Tuple2(200, 0),
+					_Utils_Tuple2(200, 100)
+				])
+		}
+		]));
+var elm$core$List$append = F2(
+	function (xs, ys) {
+		if (!ys.b) {
+			return xs;
+		} else {
+			return A3(elm$core$List$foldr, elm$core$List$cons, ys, xs);
+		}
+	});
+var elm$core$List$concat = function (lists) {
+	return A3(elm$core$List$foldr, elm$core$List$append, _List_Nil, lists);
+};
 var elm$core$List$unzip = function (pairs) {
 	var step = F2(
 		function (_n0, _n1) {
@@ -5767,7 +5776,7 @@ var author$project$Grids$drawAxes = function (_n0) {
 };
 var elm$svg$Svg$Attributes$class = _VirtualDom_attribute('class');
 var author$project$Lines$activeClass = function (line) {
-	return line.active ? elm$svg$Svg$Attributes$class('') : elm$svg$Svg$Attributes$class('none');
+	return line.active ? elm$svg$Svg$Attributes$class('') : elm$svg$Svg$Attributes$class('hidden');
 };
 var author$project$Points$normalCordinates = F2(
 	function (height, _n0) {
@@ -5783,13 +5792,24 @@ var author$project$Points$scale = F2(
 		var y = _n1.b;
 		return _Utils_Tuple2(scaleX * x, scaleY * y);
 	});
+var author$project$Points$translate = F2(
+	function (_n0, _n1) {
+		var trX = _n0.a;
+		var trY = _n0.b;
+		var x = _n1.a;
+		var y = _n1.b;
+		return _Utils_Tuple2(x + trX, y + trY);
+	});
 var author$project$Points$render = F3(
 	function (transform, _n0, point) {
 		var height = _n0.b;
 		return A2(
 			author$project$Points$normalCordinates,
 			height,
-			A2(author$project$Points$scale, transform.scale, point));
+			A2(
+				author$project$Points$translate,
+				transform.translate,
+				A2(author$project$Points$scale, transform.scale, point)));
 	});
 var author$project$Points$toString = function (_n0) {
 	var x = _n0.a;
@@ -5811,29 +5831,9 @@ var author$project$Lines$pointsAttr = F3(
 						A2(author$project$Points$render, transform, size),
 						line.points))));
 	});
-var author$project$Tuples$joinWithComma = function (_n0) {
-	var x = _n0.a;
-	var y = _n0.b;
-	return A2(
-		elm$core$String$join,
-		',',
-		A2(
-			elm$core$List$map,
-			elm$core$String$fromFloat,
-			_List_fromArray(
-				[x, y])));
-};
-var author$project$Transforms$translateAttr = function (_n0) {
-	var translate = _n0.translate;
-	return function (v) {
-		return 'translate(' + (v + ')');
-	}(
-		author$project$Tuples$joinWithComma(translate));
-};
 var elm$svg$Svg$polyline = elm$svg$Svg$trustedNode('polyline');
 var elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
 var elm$svg$Svg$Attributes$id = _VirtualDom_attribute('id');
-var elm$svg$Svg$Attributes$transform = _VirtualDom_attribute('transform');
 var author$project$Lines$draw = F3(
 	function (transform_, size, line) {
 		return A2(
@@ -5844,9 +5844,7 @@ var author$project$Lines$draw = F3(
 					elm$svg$Svg$Attributes$fill('none'),
 					elm$svg$Svg$Attributes$stroke(line.color),
 					elm$svg$Svg$Attributes$strokeWidth('3'),
-					elm$svg$Svg$Attributes$transform(
-					author$project$Transforms$translateAttr(transform_)),
-					elm$svg$Svg$Attributes$class('translate'),
+					elm$svg$Svg$Attributes$class('translate line'),
 					author$project$Lines$activeClass(line),
 					elm$svg$Svg$Attributes$id(
 					elm$core$String$fromInt(line.id))

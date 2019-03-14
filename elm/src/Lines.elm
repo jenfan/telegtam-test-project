@@ -1,4 +1,4 @@
-module Lines exposing (Line, draw, title, toString, valuesRange)
+module Lines exposing (Line, draw, init, title, toString, valuesRange)
 
 import Points exposing (Point)
 import Ranges exposing (Range, Size, XYRanges)
@@ -10,10 +10,21 @@ import Tuples
 
 type alias Line =
     { points : List Point
+    , nextPoints : List Point
     , active : Bool
     , id : Int
     , color : String
     }
+
+
+init :
+    { points : List Point
+    , id : Int
+    , color : String
+    }
+    -> Line
+init { points, id, color } =
+    Line points [] True id color
 
 
 toString : Line -> String
@@ -35,11 +46,11 @@ draw transform_ size line =
         , fill "none"
         , stroke line.color
         , strokeWidth "3"
-        , transform <| Transforms.translateAttr transform_
 
+        --, transform <| Transforms.translateAttr transform_
         --, transform <| Transforms.scaleAttr transform_
         --, transform <| Transforms.scaleAndTranslateAttr transform_
-        , class "translate"
+        , class "translate line"
         , activeClass line
         , id <| String.fromInt line.id
         ]
@@ -74,7 +85,7 @@ activeClass line =
         class ""
 
     else
-        class "none"
+        class "hidden"
 
 
 valuesRange : List Line -> Maybe XYRanges

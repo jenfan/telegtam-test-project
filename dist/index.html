@@ -4,19 +4,14 @@
   <title>telegram test charts</title>
   <script type="text/javascript" src="./elm.js"></script>
   <style type="text/css">
-    .translate {
-      transition: transform .5s ease;
+    .line {
+      -webkit-transition: opacity 1s ease-in-out;
+      -moz-transition: opacity 1s ease-in-out;
+      -ms-transition: opacity 1s ease-in-out;
+      -o-transition: opacity 1s ease-in-out;
+      transition: opacity 1s ease-in-out;
     }
-    .scale {
-      transition: opacity ease 1s, transform .5s ease;
-      /*transition: visibility 0s, opacity 0.5s linear;*/
-      /*transition-property: visibility, transform;*/
-      /*transition-duration: 1s;*/
-      opacity: 1;
-    }
-    .none {
-      opacity: 0;
-    }
+    .hidden { opacity: 0; }
   </style>
 </head>
 <body>
