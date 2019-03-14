@@ -15,9 +15,12 @@ type alias RangePosition =
 render : Transform -> Size -> Point -> Point
 render transform ( _, height ) point =
     point
-        |> scale transform.scale
-        |> translate transform.translate
-        |> normalCordinates height
+
+
+
+--|> scale transform.scale
+--|> translate transform.translate
+--|> normalCordinates height
 
 
 scale : Scale -> Point -> Point

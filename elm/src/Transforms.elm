@@ -1,4 +1,4 @@
-module Transforms exposing (Scale, Transform, Translate, calcTransform, scaleAndTranslateAttr, scaleAttr, translateAttr, viewbox)
+module Transforms exposing (Scale, Transform, Translate, calcTransform, scaleAndTranslateAttr, scaleAttr, strokeWidth, translateAttr, viewbox)
 
 import Ranges exposing (Size, XYRanges)
 import Svg.Attributes
@@ -112,6 +112,14 @@ viewbox maybeXYRange ( w, h ) =
     coordinates
         |> List.map String.fromFloat
         |> String.join " "
+
+
+strokeWidth : Float -> Scale -> String
+strokeWidth width ( x, y ) =
+    width
+        --/ x
+        --/ y
+        |> String.fromFloat
 
 
 to_s : ( Float, Float ) -> String

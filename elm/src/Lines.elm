@@ -45,12 +45,11 @@ draw transform_ size line =
         [ pointsAttr transform_ size line
         , fill "none"
         , stroke line.color
-        , strokeWidth "3"
+        , strokeWidth <| Transforms.strokeWidth 2 transform_.scale
+        , transform <| Transforms.scaleAttr transform_
 
-        --, transform <| Transforms.translateAttr transform_
-        --, transform <| Transforms.scaleAttr transform_
         --, transform <| Transforms.scaleAndTranslateAttr transform_
-        , class "translate line"
+        , class "transition line"
         , activeClass line
         , id <| String.fromInt line.id
         ]

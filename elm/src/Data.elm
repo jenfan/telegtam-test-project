@@ -14,7 +14,7 @@ initModels =
       }
     , { points =
             [ ( 100, 0 )
-            , ( 300, 0 )
+            , ( 1300, 0 )
             ]
       , id = 2
       , color = "red"

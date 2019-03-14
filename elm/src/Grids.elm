@@ -11,6 +11,7 @@ import Transforms exposing (Transform)
 
 type alias Grid =
     { size : Size
+    , margins : Int
     , rowsNum : Int
     , xyRanges : Maybe XYRanges
     , transform : Transform
@@ -25,6 +26,7 @@ init size lines =
             Lines.valuesRange lines
     in
     { size = size
+    , margins = 3
     , rowsNum = 6
     , xyRanges = xyRanges
     , transform = Transforms.calcTransform size xyRanges
@@ -69,7 +71,7 @@ view grid =
     svg
         [ heightAttr grid.size
         , widthAttr grid.size
-        , viewBox "0 0 100 100"
+        , viewBox "-10 -10 120 120"
 
         --, viewBox <| Transforms.viewbox grid.xyRanges grid.size
         ]
@@ -81,18 +83,28 @@ view grid =
 
 --Nothing ->
 --    svg [] []
+--viewBoxAttr : Grid -> Attribute msg
+--viewBoxAttr grid =
+--    grid
 
 
 viewLineButton : Line -> Html Msg
 viewLineButton line =
-    button [ onClick (ToggleLine line.id) ] [ text <| Lines.title line ]
+    button
+        [ onClick (ToggleLine line.id)
+        , class line.color
+        ]
+        [ text <| Lines.title line ]
 
 
 drawLines : List Line -> Transform -> Size -> Svg Msg
 drawLines lines transform_ size =
     lines
         |> List.map (Lines.draw transform_ size)
-        |> g []
+        |> g
+            [ transform <| Transforms.translateAttr transform_
+            , class "transition"
+            ]
 
 
 drawAxes : Size -> Svg msg

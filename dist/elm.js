@@ -5081,7 +5081,7 @@ var author$project$Data$initModels = A2(
 			points: _List_fromArray(
 				[
 					_Utils_Tuple2(100, 0),
-					_Utils_Tuple2(300, 0)
+					_Utils_Tuple2(1300, 0)
 				])
 		},
 			{
@@ -5291,6 +5291,7 @@ var author$project$Grids$init = F2(
 		var xyRanges = author$project$Lines$valuesRange(lines);
 		return {
 			lines: lines,
+			margins: 3,
 			rowsNum: 6,
 			size: size,
 			transform: A2(author$project$Transforms$calcTransform, size, xyRanges),
@@ -5778,38 +5779,10 @@ var elm$svg$Svg$Attributes$class = _VirtualDom_attribute('class');
 var author$project$Lines$activeClass = function (line) {
 	return line.active ? elm$svg$Svg$Attributes$class('') : elm$svg$Svg$Attributes$class('hidden');
 };
-var author$project$Points$normalCordinates = F2(
-	function (height, _n0) {
-		var x = _n0.a;
-		var y = _n0.b;
-		return _Utils_Tuple2(x, height - y);
-	});
-var author$project$Points$scale = F2(
-	function (_n0, _n1) {
-		var scaleX = _n0.a;
-		var scaleY = _n0.b;
-		var x = _n1.a;
-		var y = _n1.b;
-		return _Utils_Tuple2(scaleX * x, scaleY * y);
-	});
-var author$project$Points$translate = F2(
-	function (_n0, _n1) {
-		var trX = _n0.a;
-		var trY = _n0.b;
-		var x = _n1.a;
-		var y = _n1.b;
-		return _Utils_Tuple2(x + trX, y + trY);
-	});
 var author$project$Points$render = F3(
 	function (transform, _n0, point) {
 		var height = _n0.b;
-		return A2(
-			author$project$Points$normalCordinates,
-			height,
-			A2(
-				author$project$Points$translate,
-				transform.translate,
-				A2(author$project$Points$scale, transform.scale, point)));
+		return point;
 	});
 var author$project$Points$toString = function (_n0) {
 	var x = _n0.a;
@@ -5831,9 +5804,35 @@ var author$project$Lines$pointsAttr = F3(
 						A2(author$project$Points$render, transform, size),
 						line.points))));
 	});
+var author$project$Tuples$joinWithComma = function (_n0) {
+	var x = _n0.a;
+	var y = _n0.b;
+	return A2(
+		elm$core$String$join,
+		',',
+		A2(
+			elm$core$List$map,
+			elm$core$String$fromFloat,
+			_List_fromArray(
+				[x, y])));
+};
+var author$project$Transforms$scaleAttr = function (_n0) {
+	var scale = _n0.scale;
+	return function (v) {
+		return 'scale(' + (v + ')');
+	}(
+		author$project$Tuples$joinWithComma(scale));
+};
+var author$project$Transforms$strokeWidth = F2(
+	function (width, _n0) {
+		var x = _n0.a;
+		var y = _n0.b;
+		return elm$core$String$fromFloat(width);
+	});
 var elm$svg$Svg$polyline = elm$svg$Svg$trustedNode('polyline');
 var elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
 var elm$svg$Svg$Attributes$id = _VirtualDom_attribute('id');
+var elm$svg$Svg$Attributes$transform = _VirtualDom_attribute('transform');
 var author$project$Lines$draw = F3(
 	function (transform_, size, line) {
 		return A2(
@@ -5843,20 +5842,35 @@ var author$project$Lines$draw = F3(
 					A3(author$project$Lines$pointsAttr, transform_, size, line),
 					elm$svg$Svg$Attributes$fill('none'),
 					elm$svg$Svg$Attributes$stroke(line.color),
-					elm$svg$Svg$Attributes$strokeWidth('3'),
-					elm$svg$Svg$Attributes$class('translate line'),
+					elm$svg$Svg$Attributes$strokeWidth(
+					A2(author$project$Transforms$strokeWidth, 2, transform_.scale)),
+					elm$svg$Svg$Attributes$transform(
+					author$project$Transforms$scaleAttr(transform_)),
+					elm$svg$Svg$Attributes$class('transition line'),
 					author$project$Lines$activeClass(line),
 					elm$svg$Svg$Attributes$id(
 					elm$core$String$fromInt(line.id))
 				]),
 			_List_Nil);
 	});
+var author$project$Transforms$translateAttr = function (_n0) {
+	var translate = _n0.translate;
+	return function (v) {
+		return 'translate(' + (v + ')');
+	}(
+		author$project$Tuples$joinWithComma(translate));
+};
 var elm$svg$Svg$g = elm$svg$Svg$trustedNode('g');
 var author$project$Grids$drawLines = F3(
 	function (lines, transform_, size) {
 		return A2(
 			elm$svg$Svg$g,
-			_List_Nil,
+			_List_fromArray(
+				[
+					elm$svg$Svg$Attributes$transform(
+					author$project$Transforms$translateAttr(transform_)),
+					elm$svg$Svg$Attributes$class('transition')
+				]),
 			A2(
 				elm$core$List$map,
 				A2(author$project$Lines$draw, transform_, size),
@@ -5882,7 +5896,7 @@ var author$project$Grids$view = function (grid) {
 			[
 				author$project$Grids$heightAttr(grid.size),
 				author$project$Grids$widthAttr(grid.size),
-				elm$svg$Svg$Attributes$viewBox('0 0 100 100')
+				elm$svg$Svg$Attributes$viewBox('-10 -10 120 120')
 			]),
 		_List_fromArray(
 			[
@@ -5925,7 +5939,8 @@ var author$project$Grids$viewLineButton = function (line) {
 		_List_fromArray(
 			[
 				elm$html$Html$Events$onClick(
-				author$project$Grids$ToggleLine(line.id))
+				author$project$Grids$ToggleLine(line.id)),
+				elm$svg$Svg$Attributes$class(line.color)
 			]),
 		_List_fromArray(
 			[
