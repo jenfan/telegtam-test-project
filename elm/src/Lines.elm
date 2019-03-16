@@ -1,7 +1,7 @@
 module Lines exposing (Line, draw, init, title, toString, valuesRange)
 
 import Points exposing (Point)
-import Ranges exposing (Range, Size, XYRanges)
+import Ranges exposing (Range, Size, XY, XYRanges)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import Transforms exposing (Transform)
@@ -10,7 +10,6 @@ import Tuples
 
 type alias Line =
     { points : List Point
-    , nextPoints : List Point
     , active : Bool
     , id : Int
     , color : String
@@ -18,19 +17,19 @@ type alias Line =
 
 
 init :
-    { points : List Point
+    { points : List XY
     , id : Int
     , color : String
     }
     -> Line
 init { points, id, color } =
-    Line points [] True id color
+    Line (points |> List.map Points.initXY) True id color
 
 
 toString : Line -> String
 toString { points } =
     points
-        |> List.map Points.toString
+        |> List.map Points.render
         |> String.join " "
 
 
@@ -45,11 +44,8 @@ draw transform_ size line =
         [ pointsAttr transform_ size line
         , fill "none"
         , stroke line.color
-        , strokeWidth <| Transforms.strokeWidth 2 transform_.scale
-        , transform <| Transforms.scaleAttr transform_
-
-        --, transform <| Transforms.scaleAndTranslateAttr transform_
-        , class "transition line"
+        , strokeWidth "2"
+        , class "line"
         , activeClass line
         , id <| String.fromInt line.id
         ]
@@ -59,8 +55,7 @@ draw transform_ size line =
 pointsAttr : Transform -> Size -> Line -> Attribute msg
 pointsAttr transform size line =
     line.points
-        |> List.map (Points.render transform size)
-        |> List.map Points.toString
+        |> List.map Points.render
         |> String.join " "
         |> Svg.Attributes.points
 
@@ -89,28 +84,7 @@ activeClass line =
 
 valuesRange : List Line -> Maybe XYRanges
 valuesRange lines =
-    let
-        ( xList, yList ) =
-            splitToAxes lines
-
-        xMin =
-            List.minimum xList
-
-        yMin =
-            List.minimum yList
-
-        xMax =
-            List.maximum xList
-
-        yMax =
-            List.maximum yList
-    in
-    Ranges.init xMin xMax yMin yMax
-
-
-splitToAxes : List Line -> ( List Float, List Float )
-splitToAxes lines =
     lines
         |> List.map .points
         |> List.concat
-        |> List.unzip
+        |> Points.range

@@ -1,7 +1,7 @@
 module Main exposing (main)
 
 import Browser exposing (..)
-import Data exposing (initModels)
+import Data
 import Grids exposing (Grid)
 import Html exposing (Html, br, div)
 import Lines exposing (Line)
@@ -16,7 +16,7 @@ type Msg
 
 init : () -> ( Grid, Cmd Msg )
 init _ =
-    ( Grids.init ( 100, 100 ) initModels, Cmd.none )
+    ( Grids.init Data.initModels, Cmd.none )
 
 
 view : Grid -> List (Html Msg)
@@ -25,14 +25,14 @@ view grid =
     , br [] []
     , br [] []
     , Html.map GridMsg <| Grids.view grid
-    , viewLineButtons grid.lines
+    , viewLineBtns grid.lines
     ]
 
 
-viewLineButtons : List Line -> Html Msg
-viewLineButtons lines =
+viewLineBtns : List Line -> Html Msg
+viewLineBtns lines =
     lines
-        |> List.map Grids.viewLineButton
+        |> List.map Grids.viewLineBtn
         |> List.map (Html.map GridMsg)
         |> div []
 

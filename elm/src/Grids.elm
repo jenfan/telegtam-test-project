@@ -1,17 +1,19 @@
-module Grids exposing (Grid, Msg, init, update, view, viewLineButton)
+module Grids exposing (Grid, Msg, init, update, view, viewLineBtn)
 
+import Dials
 import Html exposing (Html, button, div)
 import Html.Events exposing (onClick)
 import Lines exposing (Line)
-import Ranges exposing (Range, Size, XYRanges)
+import Ranges exposing (Range, Size, XY, XYRanges)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import Transforms exposing (Transform)
+import Tuples
 
 
 type alias Grid =
     { size : Size
-    , margins : Int
+    , margins : Float
     , rowsNum : Int
     , xyRanges : Maybe XYRanges
     , transform : Transform
@@ -19,14 +21,17 @@ type alias Grid =
     }
 
 
-init : Size -> List Line -> Grid
-init size lines =
+init : List Line -> Grid
+init lines =
     let
         xyRanges =
             Lines.valuesRange lines
+
+        size =
+            ( 300, 100 )
     in
     { size = size
-    , margins = 3
+    , margins = 10
     , rowsNum = 6
     , xyRanges = xyRanges
     , transform = Transforms.calcTransform size xyRanges
@@ -66,30 +71,20 @@ update msg grid =
 
 view : Grid -> Html Msg
 view grid =
-    --case grid.xyRanges of
-    --Just xyRanges ->
     svg
-        [ heightAttr grid.size
-        , widthAttr grid.size
-        , viewBox "-10 -10 120 120"
+        [ width <| String.fromFloat <| Tuple.first grid.size
+        , height <| String.fromFloat <| Tuple.second grid.size
+        , viewBoxAttr grid.size grid.margins
 
         --, viewBox <| Transforms.viewbox grid.xyRanges grid.size
         ]
-        [ drawAxes grid.size
+        [ drawAxes grid.size grid.xyRanges grid.transform
         , drawLines grid.lines grid.transform grid.size
         ]
 
 
-
---Nothing ->
---    svg [] []
---viewBoxAttr : Grid -> Attribute msg
---viewBoxAttr grid =
---    grid
-
-
-viewLineButton : Line -> Html Msg
-viewLineButton line =
+viewLineBtn : Line -> Html Msg
+viewLineBtn line =
     button
         [ onClick (ToggleLine line.id)
         , class line.color
@@ -101,41 +96,29 @@ drawLines : List Line -> Transform -> Size -> Svg Msg
 drawLines lines transform_ size =
     lines
         |> List.map (Lines.draw transform_ size)
-        |> g
-            [ transform <| Transforms.translateAttr transform_
-            , class "transition"
-            ]
+        |> g []
+        |> Transforms.transformGroup transform_
 
 
-drawAxes : Size -> Svg msg
-drawAxes ( width, height ) =
-    svg []
-        [ Svg.line
-            [ x1 "0"
-            , y1 "0"
-            , x2 "0"
-            , y2 <| String.fromFloat height
-            , stroke "black"
-            , strokeWidth "3"
-            ]
-            []
-        , Svg.line
-            [ x1 "0"
-            , y1 <| String.fromFloat height
-            , x2 <| String.fromFloat width
-            , y2 <| String.fromFloat height
-            , stroke "black"
-            , strokeWidth "3"
-            ]
-            []
-        ]
+drawAxes : Size -> Maybe XYRanges -> Transform -> Svg msg
+drawAxes size xyRanges transform_ =
+    case xyRanges of
+        Just range ->
+            let
+                dial =
+                    Dials.init size
+            in
+            Dials.view size range transform_ dial
+
+        Nothing ->
+            svg [] []
 
 
-widthAttr : Size -> Attribute msg
-widthAttr ( w, _ ) =
-    Svg.Attributes.width <| String.fromFloat w
-
-
-heightAttr : Size -> Attribute msg
-heightAttr ( _, h ) =
-    Svg.Attributes.height <| String.fromFloat h
+viewBoxAttr : Size -> Float -> Attribute msg
+viewBoxAttr ( w, h ) margin =
+    [ ( 0 - margin, (h + margin) * -1 )
+    , ( w + margin * 2, h + margin * 2 )
+    ]
+        |> List.map Tuples.joinWithSpace
+        |> String.join " "
+        |> viewBox

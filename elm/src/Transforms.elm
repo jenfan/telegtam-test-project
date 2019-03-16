@@ -1,7 +1,8 @@
-module Transforms exposing (Scale, Transform, Translate, calcTransform, scaleAndTranslateAttr, scaleAttr, strokeWidth, translateAttr, viewbox)
+module Transforms exposing (Scale, Transform, Translate, calcTransform, scaleAttr, transformGroup, translateAttr)
 
-import Ranges exposing (Size, XYRanges)
-import Svg.Attributes
+import Ranges exposing (Size, XY, XYRanges)
+import Svg exposing (Attribute, Svg, g)
+import Svg.Attributes exposing (class, transform)
 import Tuples exposing (joinWithComma)
 
 
@@ -28,7 +29,9 @@ calcTransform size maybeXYRange =
                     Debug.log "scale" <| calcScale size xyRanges
 
                 translate =
-                    calcTranslate size scale <| Debug.log "xyRange:" xyRanges
+                    Debug.log "xRange and yRange:" xyRanges
+                        |> calcTranslate size scale
+                        |> Debug.log "translate"
             in
             { scale = scale
             , translate = translate
@@ -49,7 +52,6 @@ calcScale ( w, h ) ( xRange, yRange ) =
 
         scaleX =
             case xRangeWidth == 0 of
-                -- 1 Coordinate
                 True ->
                     1
 
@@ -59,71 +61,57 @@ calcScale ( w, h ) ( xRange, yRange ) =
         scaleY =
             case yRangeWidth == 0 of
                 True ->
-                    --h / minY
                     1
 
                 False ->
-                    --h / yRangeWidth
-                    1
+                    h / yRangeWidth
     in
     ( scaleX, scaleY )
 
 
 calcTranslate : Size -> Scale -> XYRanges -> Translate
 calcTranslate ( w, h ) ( xScale, yScale ) ( ( minX, maxX ), ( minY, maxY ) ) =
-    ( (w - maxX * xScale - minX * xScale) / 2
-    , (h - maxY * yScale - minY * yScale) / 2
+    ( (w - (minX + maxX) * xScale) / 2
+    , (h - minY * yScale - maxY * yScale) / 2 * -1
     )
 
 
-
---( minX, minY )
-
-
+scaleAttr : Transform -> Attribute msg
 scaleAttr { scale } =
     scale
         |> joinWithComma
         |> (\v -> "scale(" ++ v ++ ")")
+        |> transform
 
 
+translateAttr : Transform -> Attribute msg
 translateAttr { translate } =
     translate
         |> joinWithComma
         |> (\v -> "translate(" ++ v ++ ")")
+        |> transform
 
 
-scaleAndTranslateAttr : Transform -> String
-scaleAndTranslateAttr transform =
-    scaleAttr transform ++ " " ++ translateAttr transform
+transformGroup : Transform -> Svg msg -> Svg msg
+transformGroup transform_ svg_ =
+    svg_
+        |> scaleGroup transform_
+        |> translateGroup transform_
 
 
-viewbox : Maybe XYRanges -> Size -> String
-viewbox maybeXYRange ( w, h ) =
-    let
-        coordinates =
-            case maybeXYRange of
-                Just ( ( minX, maxX ), ( minY, maxY ) ) ->
-                    [ minX, minY, maxX - minX, maxY - minY ]
-
-                --[ minX, minY, w, h ]
-                Nothing ->
-                    [ 0, 0, w, h ]
-    in
-    coordinates
-        |> List.map String.fromFloat
-        |> String.join " "
+translateGroup : Transform -> Svg msg -> Svg msg
+translateGroup transform_ svg_ =
+    g
+        [ translateAttr transform_
+        , class "transition"
+        ]
+        [ svg_ ]
 
 
-strokeWidth : Float -> Scale -> String
-strokeWidth width ( x, y ) =
-    width
-        --/ x
-        --/ y
-        |> String.fromFloat
-
-
-to_s : ( Float, Float ) -> String
-to_s ( x, y ) =
-    [ x, y ]
-        |> List.map String.fromFloat
-        |> String.join ","
+scaleGroup : Transform -> Svg msg -> Svg msg
+scaleGroup transform_ svg_ =
+    g
+        [ scaleAttr transform_
+        , class "transition"
+        ]
+        [ svg_ ]

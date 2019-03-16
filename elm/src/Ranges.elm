@@ -1,4 +1,4 @@
-module Ranges exposing (Range, Size, XYRanges, init, width)
+module Ranges exposing (Range, Size, XY, XYRanges, init, initListFloats, initWithMaybe, initXYRanges, width)
 
 
 type alias Range =
@@ -9,27 +9,59 @@ type alias Size =
     ( Float, Float )
 
 
+type alias XY =
+    ( Float, Float )
+
+
 type alias XYRanges =
     ( Range, Range )
 
 
-init : Maybe Float -> Maybe Float -> Maybe Float -> Maybe Float -> Maybe XYRanges
-init maybeMinX maybeMaxX maybeMinY maybeMaxY =
-    case maybeMinX of
-        Just minX ->
-            case maybeMaxX of
-                Just maxX ->
-                    case maybeMinY of
-                        Just minY ->
-                            case maybeMaxY of
-                                Just maxY ->
-                                    Just ( ( minX, maxX ), ( minY, maxY ) )
+init : List Float -> Maybe Range
+init floats =
+    let
+        min =
+            List.minimum floats
 
-                                Nothing ->
-                                    Nothing
+        max =
+            List.maximum floats
+    in
+    initWithMaybe min max
 
-                        Nothing ->
-                            Nothing
+
+initListFloats : Int -> Float -> List Float
+initListFloats numOfDials width_ =
+    let
+        step =
+            width_ / toFloat numOfDials
+    in
+    List.range 0 (numOfDials - 1)
+        |> List.map toFloat
+        |> List.map (\a -> a * step)
+
+
+initWithMaybe : Maybe Float -> Maybe Float -> Maybe Range
+initWithMaybe mbX mbY =
+    case mbX of
+        Just x ->
+            case mbY of
+                Just y ->
+                    Just ( x, y )
+
+                Nothing ->
+                    Nothing
+
+        Nothing ->
+            Nothing
+
+
+initXYRanges : Maybe Range -> Maybe Range -> Maybe XYRanges
+initXYRanges maybeXRange maybeYRange =
+    case maybeXRange of
+        Just xRange ->
+            case maybeYRange of
+                Just yRange ->
+                    Just ( xRange, yRange )
 
                 Nothing ->
                     Nothing
