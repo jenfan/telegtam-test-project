@@ -1,4 +1,4 @@
-module Grids exposing (Grid, Msg, init, update, view, viewLineBtn)
+port module Grids exposing (Grid, Msg, init, subscriptions, update, view, viewLineBtn)
 
 import Dials
 import Html exposing (Html, button, div)
@@ -13,7 +13,7 @@ import Tuples
 
 type alias Grid =
     { size : Size
-    , margins : Float
+    , margins : Int
     , rowsNum : Int
     , xyRanges : Maybe XYRanges
     , transform : Transform
@@ -21,14 +21,11 @@ type alias Grid =
     }
 
 
-init : List Line -> Grid
-init lines =
+init : Size -> List Line -> Grid
+init size lines =
     let
         xyRanges =
             Lines.valuesRange lines
-
-        size =
-            ( 300, 100 )
     in
     { size = size
     , margins = 10
@@ -41,6 +38,10 @@ init lines =
 
 type Msg
     = ToggleLine Int
+    | WindowResized Size
+
+
+port windResized : (Size -> msg) -> Sub msg
 
 
 update : Msg -> Grid -> Grid
@@ -68,12 +69,23 @@ update msg grid =
                 , transform = Transforms.calcTransform grid.size xyRanges
             }
 
+        WindowResized size ->
+            { grid
+                | transform = Transforms.calcTransform size grid.xyRanges
+                , size = size
+            }
+
+
+subscriptions : Sub Msg
+subscriptions =
+    windResized WindowResized
+
 
 view : Grid -> Html Msg
 view grid =
     svg
-        [ width <| String.fromFloat <| Tuple.first grid.size
-        , height <| String.fromFloat <| Tuple.second grid.size
+        [ width <| String.fromInt <| Tuple.first grid.size
+        , height <| String.fromInt <| Tuple.second grid.size
         , viewBoxAttr grid.size grid.margins
 
         --, viewBox <| Transforms.viewbox grid.xyRanges grid.size
@@ -114,11 +126,13 @@ drawAxes size xyRanges transform_ =
             svg [] []
 
 
-viewBoxAttr : Size -> Float -> Attribute msg
+viewBoxAttr : Size -> Int -> Attribute msg
 viewBoxAttr ( w, h ) margin =
-    [ ( 0 - margin, (h + margin) * -1 )
-    , ( w + margin * 2, h + margin * 2 )
+    [ 0 - margin
+    , (h + margin) * -1
+    , w + margin * 2
+    , h + margin * 2
     ]
-        |> List.map Tuples.joinWithSpace
+        |> List.map String.fromInt
         |> String.join " "
         |> viewBox

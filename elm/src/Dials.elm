@@ -17,7 +17,7 @@ type alias Dial =
 
 init : Size -> Dial
 init ( width, height ) =
-    Dial 5 6 (width / 5.0) (height / 6.0)
+    Dial 5 6 (toFloat width / 5.0) (toFloat height / 6.0)
 
 
 view : Size -> XYRanges -> Transform -> Dial -> Svg msg
@@ -40,7 +40,7 @@ view ( width, height ) ( xRange, yRange ) transform dial =
         ]
 
 
-v : Float -> (Point -> String) -> Point -> List (Svg msg)
+v : Int -> (Point -> String) -> Point -> List (Svg msg)
 v width actualY point =
     let
         title =
@@ -60,12 +60,12 @@ h actualX point =
     textX title point
 
 
-hLine : Float -> Point -> Svg msg
+hLine : Int -> Point -> Svg msg
 hLine w point =
     Svg.line
         [ x1 "0"
         , y1 <| Points.renderY point
-        , x2 <| String.fromFloat w
+        , x2 <| String.fromInt w
         , y2 <| Points.renderY point
         , stroke "black"
         , strokeWidth "0.1"

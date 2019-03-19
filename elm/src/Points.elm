@@ -50,11 +50,8 @@ actualRoundY transform_ point =
 actual : Transform -> Point -> Point
 actual transform_ point =
     point
-        |> Debug.log "Start transform"
         |> untranslate transform_.translate
-        |> Debug.log "after scale"
         |> unscale transform_.scale
-        |> Debug.log "after translate"
 
 
 scale : Scale -> Point -> Point

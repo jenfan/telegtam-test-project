@@ -232,87 +232,6 @@ var _JsArray_appendN = F3(function(n, dest, source)
 
 
 
-var _List_Nil_UNUSED = { $: 0 };
-var _List_Nil = { $: '[]' };
-
-function _List_Cons_UNUSED(hd, tl) { return { $: 1, a: hd, b: tl }; }
-function _List_Cons(hd, tl) { return { $: '::', a: hd, b: tl }; }
-
-
-var _List_cons = F2(_List_Cons);
-
-function _List_fromArray(arr)
-{
-	var out = _List_Nil;
-	for (var i = arr.length; i--; )
-	{
-		out = _List_Cons(arr[i], out);
-	}
-	return out;
-}
-
-function _List_toArray(xs)
-{
-	for (var out = []; xs.b; xs = xs.b) // WHILE_CONS
-	{
-		out.push(xs.a);
-	}
-	return out;
-}
-
-var _List_map2 = F3(function(f, xs, ys)
-{
-	for (var arr = []; xs.b && ys.b; xs = xs.b, ys = ys.b) // WHILE_CONSES
-	{
-		arr.push(A2(f, xs.a, ys.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_map3 = F4(function(f, xs, ys, zs)
-{
-	for (var arr = []; xs.b && ys.b && zs.b; xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
-	{
-		arr.push(A3(f, xs.a, ys.a, zs.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_map4 = F5(function(f, ws, xs, ys, zs)
-{
-	for (var arr = []; ws.b && xs.b && ys.b && zs.b; ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
-	{
-		arr.push(A4(f, ws.a, xs.a, ys.a, zs.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_map5 = F6(function(f, vs, ws, xs, ys, zs)
-{
-	for (var arr = []; vs.b && ws.b && xs.b && ys.b && zs.b; vs = vs.b, ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
-	{
-		arr.push(A5(f, vs.a, ws.a, xs.a, ys.a, zs.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_sortBy = F2(function(f, xs)
-{
-	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
-		return _Utils_cmp(f(a), f(b));
-	}));
-});
-
-var _List_sortWith = F2(function(f, xs)
-{
-	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
-		var ord = A2(f, a, b);
-		return ord === elm$core$Basics$EQ ? 0 : ord === elm$core$Basics$LT ? -1 : 1;
-	}));
-});
-
-
-
 // LOG
 
 var _Debug_log_UNUSED = F2(function(tag, value)
@@ -790,6 +709,87 @@ function _Utils_ap(xs, ys)
 	}
 	return root;
 }
+
+
+
+var _List_Nil_UNUSED = { $: 0 };
+var _List_Nil = { $: '[]' };
+
+function _List_Cons_UNUSED(hd, tl) { return { $: 1, a: hd, b: tl }; }
+function _List_Cons(hd, tl) { return { $: '::', a: hd, b: tl }; }
+
+
+var _List_cons = F2(_List_Cons);
+
+function _List_fromArray(arr)
+{
+	var out = _List_Nil;
+	for (var i = arr.length; i--; )
+	{
+		out = _List_Cons(arr[i], out);
+	}
+	return out;
+}
+
+function _List_toArray(xs)
+{
+	for (var out = []; xs.b; xs = xs.b) // WHILE_CONS
+	{
+		out.push(xs.a);
+	}
+	return out;
+}
+
+var _List_map2 = F3(function(f, xs, ys)
+{
+	for (var arr = []; xs.b && ys.b; xs = xs.b, ys = ys.b) // WHILE_CONSES
+	{
+		arr.push(A2(f, xs.a, ys.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_map3 = F4(function(f, xs, ys, zs)
+{
+	for (var arr = []; xs.b && ys.b && zs.b; xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
+	{
+		arr.push(A3(f, xs.a, ys.a, zs.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_map4 = F5(function(f, ws, xs, ys, zs)
+{
+	for (var arr = []; ws.b && xs.b && ys.b && zs.b; ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
+	{
+		arr.push(A4(f, ws.a, xs.a, ys.a, zs.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_map5 = F6(function(f, vs, ws, xs, ys, zs)
+{
+	for (var arr = []; vs.b && ws.b && xs.b && ys.b && zs.b; vs = vs.b, ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
+	{
+		arr.push(A5(f, vs.a, ws.a, xs.a, ys.a, zs.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_sortBy = F2(function(f, xs)
+{
+	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
+		return _Utils_cmp(f(a), f(b));
+	}));
+});
+
+var _List_sortWith = F2(function(f, xs)
+{
+	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
+		var ord = A2(f, a, b);
+		return ord === elm$core$Basics$EQ ? 0 : ord === elm$core$Basics$LT ? -1 : 1;
+	}));
+});
 
 
 
@@ -4870,16 +4870,8 @@ function _Browser_load(url)
 		}
 	}));
 }
-var author$project$Lines$Line = F4(
-	function (points, active, id, color) {
-		return {active: active, color: color, id: id, points: points};
-	});
-var author$project$Points$Point = function (a) {
-	return {$: 'Point', a: a};
-};
-var elm$core$Basics$identity = function (x) {
-	return x;
-};
+var elm$core$Basics$EQ = {$: 'EQ'};
+var elm$core$Basics$LT = {$: 'LT'};
 var elm$core$Elm$JsArray$foldr = _JsArray_foldr;
 var elm$core$Array$foldr = F3(
 	function (func, baseCase, _n0) {
@@ -4901,8 +4893,6 @@ var elm$core$Array$foldr = F3(
 			A3(elm$core$Elm$JsArray$foldr, func, baseCase, tail),
 			tree);
 	});
-var elm$core$Basics$EQ = {$: 'EQ'};
-var elm$core$Basics$LT = {$: 'LT'};
 var elm$core$List$cons = _List_cons;
 var elm$core$Array$toList = function (array) {
 	return A3(elm$core$Array$foldr, elm$core$List$cons, _List_Nil, array);
@@ -4959,6 +4949,22 @@ var elm$core$Dict$keys = function (dict) {
 var elm$core$Set$toList = function (_n0) {
 	var dict = _n0.a;
 	return elm$core$Dict$keys(dict);
+};
+var author$project$Charts$x = _List_fromArray(
+	[1542412.8, 1542499.2, 1542585.6, 1542672.0, 1542758.4, 1542844.8, 1542931.2, 1543017.6, 1543104.0, 1543190.4, 1543276.8, 1543363.2, 1543449.6, 1543536.0, 1543622.4, 1543708.8, 1543795.2, 1543881.6, 1543968.0, 1544054.4, 1544140.8, 1544227.2, 1544313.6, 1544400.0, 1544486.4, 1544572.8, 1544659.2, 1544745.6, 1544832.0, 1544918.4, 1545004.8, 1545091.2, 1545177.6, 1545264.0, 1545350.4, 1545436.8, 1545523.2, 1545609.6, 1545696.0, 1545782.4, 1545868.8, 1545955.2, 1546041.6, 1546128.0, 1546214.4, 1546300.8, 1546387.2, 1546473.6, 1546560.0, 1546646.4, 1546732.8, 1546819.2, 1546905.6, 1546992.0, 1547078.4, 1547164.8, 1547251.2, 1547337.6, 1547424.0, 1547510.4, 1547596.8, 1547683.2, 1547769.6, 1547856.0, 1547942.4, 1548028.8, 1548115.2, 1548201.6, 1548288.0, 1548374.4, 1548460.8, 1548547.2, 1548633.6, 1548720.0, 1548806.4, 1548892.8, 1548979.2, 1549065.6, 1549152.0, 1549238.4, 1549324.8, 1549411.2, 1549497.6, 1549584.0, 1549670.4, 1549756.8, 1549843.2, 1549929.6, 1550016.0, 1550102.4, 1550188.8, 1550275.2, 1550361.6, 1550448.0, 1550534.4, 1550620.8, 1550707.2, 1550793.6, 1550880.0, 1550966.4, 1551052.8, 1551139.2, 1551225.6, 1551312.0, 1551398.4, 1551484.8, 1551571.2, 1551657.6, 1551744.0, 1551830.4, 1551916.8, 1552003.2]);
+var author$project$Charts$y0 = _List_fromArray(
+	[37, 20, 32, 39, 32, 35, 19, 65, 36, 62, 113, 69, 120, 60, 51, 49, 71, 122, 149, 69, 57, 21, 33, 55, 92, 62, 47, 50, 56, 116, 63, 60, 55, 65, 76, 33, 45, 64, 54, 81, 180, 123, 106, 37, 60, 70, 46, 68, 46, 51, 33, 57, 75, 70, 95, 70, 50, 68, 63, 66, 53, 38, 52, 109, 121, 53, 36, 71, 96, 55, 58, 29, 31, 55, 52, 44, 126, 191, 73, 87, 255, 278, 219, 170, 129, 125, 126, 84, 65, 53, 154, 57, 71, 64, 75, 72, 39, 47, 52, 73, 89, 156, 86, 105, 88, 45, 33, 56, 142, 124, 114, 64]);
+var author$project$Charts$y1 = _List_fromArray(
+	[22, 12, 30, 40, 33, 23, 18, 41, 45, 69, 57, 61, 70, 47, 31, 34, 40, 55, 27, 57, 48, 32, 40, 49, 54, 49, 34, 51, 51, 51, 66, 51, 94, 60, 64, 28, 44, 96, 49, 73, 30, 88, 63, 42, 56, 67, 52, 67, 35, 61, 40, 55, 63, 61, 105, 59, 51, 76, 63, 57, 47, 56, 51, 98, 103, 62, 54, 104, 48, 41, 41, 37, 30, 28, 26, 37, 65, 86, 70, 81, 54, 74, 70, 50, 74, 79, 85, 62, 36, 46, 68, 43, 66, 50, 28, 66, 39, 23, 63, 74, 83, 66, 40, 60, 29, 36, 27, 54, 89, 50, 73, 52]);
+var author$project$Lines$Line = F4(
+	function (points, active, id, color) {
+		return {active: active, color: color, id: id, points: points};
+	});
+var author$project$Points$Point = function (a) {
+	return {$: 'Point', a: a};
+};
+var elm$core$Basics$identity = function (x) {
+	return x;
 };
 var author$project$Points$init = F2(
 	function (x, y) {
@@ -5079,51 +5085,27 @@ var author$project$Lines$init = function (_n0) {
 		id,
 		color);
 };
-var elm$core$Basics$negate = function (n) {
-	return -n;
-};
-var author$project$Data$initModels = A2(
-	elm$core$List$map,
-	author$project$Lines$init,
-	_List_fromArray(
-		[
-			{
-			color: 'green',
-			id: 1,
-			points: _List_fromArray(
-				[
-					_Utils_Tuple2(-100, 0),
-					_Utils_Tuple2(100, 0)
-				])
-		},
-			{
-			color: 'red',
-			id: 2,
-			points: _List_fromArray(
-				[
-					_Utils_Tuple2(300, -50),
-					_Utils_Tuple2(1300, -50)
-				])
-		},
-			{
+var elm$core$List$map2 = _List_map2;
+var elm$core$Tuple$pair = F2(
+	function (a, b) {
+		return _Utils_Tuple2(a, b);
+	});
+var author$project$Charts$init = function () {
+	var line2 = author$project$Lines$init(
+		{
 			color: 'blue',
-			id: 3,
-			points: _List_fromArray(
-				[
-					_Utils_Tuple2(100, -100),
-					_Utils_Tuple2(200, 100)
-				])
-		},
-			{
-			color: 'pink',
-			id: 4,
-			points: _List_fromArray(
-				[
-					_Utils_Tuple2(200, 0),
-					_Utils_Tuple2(300, 100)
-				])
-		}
-		]));
+			id: 1,
+			points: A3(elm$core$List$map2, elm$core$Tuple$pair, author$project$Charts$x, author$project$Charts$y1)
+		});
+	var line1 = author$project$Lines$init(
+		{
+			color: 'red',
+			id: 0,
+			points: A3(elm$core$List$map2, elm$core$Tuple$pair, author$project$Charts$x, author$project$Charts$y0)
+		});
+	return _List_fromArray(
+		[line1, line2]);
+}();
 var author$project$Points$unzip = function (_n0) {
 	var _n1 = _n0.a;
 	var x = _n1.a;
@@ -5253,6 +5235,7 @@ var author$project$Ranges$width = function (_n0) {
 };
 var elm$core$Basics$eq = _Utils_equal;
 var elm$core$Basics$fdiv = _Basics_fdiv;
+var elm$core$Basics$toFloat = _Basics_toFloat;
 var author$project$Transforms$calcScale = F2(
 	function (_n0, _n1) {
 		var w = _n0.a;
@@ -5280,6 +5263,9 @@ var author$project$Transforms$calcScale = F2(
 		return _Utils_Tuple2(scaleX, scaleY);
 	});
 var elm$core$Basics$mul = _Basics_mul;
+var elm$core$Basics$negate = function (n) {
+	return -n;
+};
 var author$project$Transforms$calcTranslate = F3(
 	function (_n0, _n1, _n2) {
 		var w = _n0.a;
@@ -5323,18 +5309,18 @@ var author$project$Transforms$calcTransform = F2(
 			};
 		}
 	});
-var author$project$Grids$init = function (lines) {
-	var xyRanges = author$project$Lines$valuesRange(lines);
-	var size = _Utils_Tuple2(300, 100);
-	return {
-		lines: lines,
-		margins: 10,
-		rowsNum: 6,
-		size: size,
-		transform: A2(author$project$Transforms$calcTransform, size, xyRanges),
-		xyRanges: xyRanges
-	};
-};
+var author$project$Grids$init = F2(
+	function (size, lines) {
+		var xyRanges = author$project$Lines$valuesRange(lines);
+		return {
+			lines: lines,
+			margins: 10,
+			rowsNum: 6,
+			size: size,
+			transform: A2(author$project$Transforms$calcTransform, size, xyRanges),
+			xyRanges: xyRanges
+		};
+	});
 var elm$core$Basics$False = {$: 'False'};
 var elm$core$Result$isOk = function (result) {
 	if (result.$ === 'Ok') {
@@ -5353,7 +5339,6 @@ var elm$core$Basics$logBase = F2(
 	function (base, number) {
 		return _Basics_log(number) / _Basics_log(base);
 	});
-var elm$core$Basics$toFloat = _Basics_toFloat;
 var elm$core$Array$shiftStep = elm$core$Basics$ceiling(
 	A2(elm$core$Basics$logBase, 2, elm$core$Array$branchFactor));
 var elm$core$Elm$JsArray$empty = _JsArray_empty;
@@ -5526,7 +5511,6 @@ var elm$core$List$length = function (xs) {
 		0,
 		xs);
 };
-var elm$core$List$map2 = _List_map2;
 var elm$core$List$rangeHelp = F3(
 	function (lo, hi, list) {
 		rangeHelp:
@@ -5686,16 +5670,38 @@ var elm$json$Json$Decode$errorToStringHelp = F2(
 	});
 var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
-var author$project$Main$init = function (_n0) {
+var author$project$Main$init = function (size) {
 	return _Utils_Tuple2(
-		author$project$Grids$init(author$project$Data$initModels),
+		A2(author$project$Grids$init, size, author$project$Charts$init),
 		elm$core$Platform$Cmd$none);
 };
-var elm$core$Platform$Sub$batch = _Platform_batch;
-var elm$core$Platform$Sub$none = elm$core$Platform$Sub$batch(_List_Nil);
-var author$project$Main$subscriptions = function (grid) {
-	return elm$core$Platform$Sub$none;
+var author$project$Grids$WindowResized = function (a) {
+	return {$: 'WindowResized', a: a};
 };
+var elm$json$Json$Decode$andThen = _Json_andThen;
+var elm$json$Json$Decode$index = _Json_decodeIndex;
+var elm$json$Json$Decode$int = _Json_decodeInt;
+var elm$json$Json$Decode$succeed = _Json_succeed;
+var author$project$Grids$windResized = _Platform_incomingPort(
+	'windResized',
+	A2(
+		elm$json$Json$Decode$andThen,
+		function (x0) {
+			return A2(
+				elm$json$Json$Decode$andThen,
+				function (x1) {
+					return elm$json$Json$Decode$succeed(
+						_Utils_Tuple2(x0, x1));
+				},
+				A2(elm$json$Json$Decode$index, 1, elm$json$Json$Decode$int));
+		},
+		A2(elm$json$Json$Decode$index, 0, elm$json$Json$Decode$int)));
+var author$project$Grids$subscriptions = author$project$Grids$windResized(author$project$Grids$WindowResized);
+var author$project$Main$GridMsg = function (a) {
+	return {$: 'GridMsg', a: a};
+};
+var elm$core$Platform$Sub$map = _Platform_map;
+var author$project$Main$subscriptions = A2(elm$core$Platform$Sub$map, author$project$Main$GridMsg, author$project$Grids$subscriptions);
 var elm$core$Basics$not = _Basics_not;
 var elm$core$List$filter = F2(
 	function (isGood, list) {
@@ -5710,32 +5716,42 @@ var elm$core$List$filter = F2(
 	});
 var author$project$Grids$update = F2(
 	function (msg, grid) {
-		var id = msg.a;
-		var updateLine = function (line) {
-			var _n1 = _Utils_eq(line.id, id);
-			if (_n1) {
-				return _Utils_update(
-					line,
-					{active: !line.active});
-			} else {
-				return line;
-			}
-		};
-		var lines = A2(elm$core$List$map, updateLine, grid.lines);
-		var xyRanges = author$project$Lines$valuesRange(
-			A2(
-				elm$core$List$filter,
-				function ($) {
-					return $.active;
-				},
-				lines));
-		return _Utils_update(
-			grid,
-			{
-				lines: lines,
-				transform: A2(author$project$Transforms$calcTransform, grid.size, xyRanges),
-				xyRanges: xyRanges
-			});
+		if (msg.$ === 'ToggleLine') {
+			var id = msg.a;
+			var updateLine = function (line) {
+				var _n1 = _Utils_eq(line.id, id);
+				if (_n1) {
+					return _Utils_update(
+						line,
+						{active: !line.active});
+				} else {
+					return line;
+				}
+			};
+			var lines = A2(elm$core$List$map, updateLine, grid.lines);
+			var xyRanges = author$project$Lines$valuesRange(
+				A2(
+					elm$core$List$filter,
+					function ($) {
+						return $.active;
+					},
+					lines));
+			return _Utils_update(
+				grid,
+				{
+					lines: lines,
+					transform: A2(author$project$Transforms$calcTransform, grid.size, xyRanges),
+					xyRanges: xyRanges
+				});
+		} else {
+			var size = msg.a;
+			return _Utils_update(
+				grid,
+				{
+					size: size,
+					transform: A2(author$project$Transforms$calcTransform, size, grid.xyRanges)
+				});
+		}
 	});
 var author$project$Main$update = F2(
 	function (msg, grid) {
@@ -5765,7 +5781,6 @@ var author$project$Points$renderY = function (_n0) {
 };
 var elm$json$Json$Decode$map = _Json_map1;
 var elm$json$Json$Decode$map2 = _Json_map2;
-var elm$json$Json$Decode$succeed = _Json_succeed;
 var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 	switch (handler.$) {
 		case 'Normal':
@@ -5824,7 +5839,7 @@ var author$project$Dials$hLine = F2(
 					elm$svg$Svg$Attributes$y1(
 					author$project$Points$renderY(point)),
 					elm$svg$Svg$Attributes$x2(
-					elm$core$String$fromFloat(w)),
+					elm$core$String$fromInt(w)),
 					elm$svg$Svg$Attributes$y2(
 					author$project$Points$renderY(point)),
 					elm$svg$Svg$Attributes$stroke('black'),
@@ -5881,18 +5896,9 @@ var author$project$Points$untranslate = F2(
 var author$project$Points$actual = F2(
 	function (transform_, point) {
 		return A2(
-			elm$core$Debug$log,
-			'after translate',
-			A2(
-				author$project$Points$unscale,
-				transform_.scale,
-				A2(
-					elm$core$Debug$log,
-					'after scale',
-					A2(
-						author$project$Points$untranslate,
-						transform_.translate,
-						A2(elm$core$Debug$log, 'Start transform', point)))));
+			author$project$Points$unscale,
+			transform_.scale,
+			A2(author$project$Points$untranslate, transform_.translate, point));
 	});
 var elm$core$Basics$round = _Basics_round;
 var author$project$Points$renderRoundX = function (_n0) {
@@ -6105,18 +6111,6 @@ var author$project$Grids$drawLines = F3(
 					A2(author$project$Lines$draw, transform_, size),
 					lines)));
 	});
-var author$project$Tuples$joinWithSpace = function (_n0) {
-	var x = _n0.a;
-	var y = _n0.b;
-	return A2(
-		elm$core$String$join,
-		' ',
-		A2(
-			elm$core$List$map,
-			elm$core$String$fromFloat,
-			_List_fromArray(
-				[x, y])));
-};
 var elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
 var author$project$Grids$viewBoxAttr = F2(
 	function (_n0, margin) {
@@ -6128,12 +6122,9 @@ var author$project$Grids$viewBoxAttr = F2(
 				' ',
 				A2(
 					elm$core$List$map,
-					author$project$Tuples$joinWithSpace,
+					elm$core$String$fromInt,
 					_List_fromArray(
-						[
-							_Utils_Tuple2(0 - margin, (h + margin) * (-1)),
-							_Utils_Tuple2(w + (margin * 2), h + (margin * 2))
-						]))));
+						[0 - margin, (h + margin) * (-1), w + (margin * 2), h + (margin * 2)]))));
 	});
 var elm$core$Tuple$second = function (_n0) {
 	var y = _n0.b;
@@ -6147,9 +6138,9 @@ var author$project$Grids$view = function (grid) {
 		_List_fromArray(
 			[
 				elm$svg$Svg$Attributes$width(
-				elm$core$String$fromFloat(grid.size.a)),
+				elm$core$String$fromInt(grid.size.a)),
 				elm$svg$Svg$Attributes$height(
-				elm$core$String$fromFloat(grid.size.b)),
+				elm$core$String$fromInt(grid.size.b)),
 				A2(author$project$Grids$viewBoxAttr, grid.size, grid.margins)
 			]),
 		_List_fromArray(
@@ -6157,9 +6148,6 @@ var author$project$Grids$view = function (grid) {
 				A3(author$project$Grids$drawAxes, grid.size, grid.xyRanges, grid.transform),
 				A3(author$project$Grids$drawLines, grid.lines, grid.transform, grid.size)
 			]));
-};
-var author$project$Main$GridMsg = function (a) {
-	return {$: 'GridMsg', a: a};
 };
 var author$project$Grids$ToggleLine = function (a) {
 	return {$: 'ToggleLine', a: a};
@@ -8548,7 +8536,6 @@ var elm$browser$Debugger$Main$getLatestModel = function (state) {
 		return model;
 	}
 };
-var elm$core$Platform$Sub$map = _Platform_map;
 var elm$browser$Debugger$Main$wrapSubs = F2(
 	function (subscriptions, model) {
 		return A2(
@@ -10381,7 +10368,9 @@ var elm$browser$Browser$document = _Browser_document;
 var author$project$Main$main = elm$browser$Browser$document(
 	{
 		init: author$project$Main$init,
-		subscriptions: author$project$Main$subscriptions,
+		subscriptions: function (_n0) {
+			return author$project$Main$subscriptions;
+		},
 		update: author$project$Main$update,
 		view: function (grid) {
 			return {
@@ -10391,4 +10380,15 @@ var author$project$Main$main = elm$browser$Browser$document(
 		}
 	});
 _Platform_export({'Main':{'init':author$project$Main$main(
-	elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.0"},"types":{"message":"Main.Msg","aliases":{},"unions":{"Main.Msg":{"args":[],"tags":{"GridMsg":["Grids.Msg"]}},"Grids.Msg":{"args":[],"tags":{"ToggleLine":["Basics.Int"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}}}}})}});}(this));
+	A2(
+		elm$json$Json$Decode$andThen,
+		function (x0) {
+			return A2(
+				elm$json$Json$Decode$andThen,
+				function (x1) {
+					return elm$json$Json$Decode$succeed(
+						_Utils_Tuple2(x0, x1));
+				},
+				A2(elm$json$Json$Decode$index, 1, elm$json$Json$Decode$int));
+		},
+		A2(elm$json$Json$Decode$index, 0, elm$json$Json$Decode$int)))({"versions":{"elm":"0.19.0"},"types":{"message":"Main.Msg","aliases":{"Ranges.Size":{"args":[],"type":"( Basics.Int, Basics.Int )"}},"unions":{"Main.Msg":{"args":[],"tags":{"GridMsg":["Grids.Msg"]}},"Grids.Msg":{"args":[],"tags":{"ToggleLine":["Basics.Int"],"WindowResized":["Ranges.Size"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}}}}})}});}(this));

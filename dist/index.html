@@ -5,15 +5,15 @@
   <script type="text/javascript" src="./elm.js"></script>
   <style type="text/css">
     .line {
-      -webkit-transition: opacity 1s ease-in-out;
-      -moz-transition: opacity 1s ease-in-out;
-      -ms-transition: opacity 1s ease-in-out;
-      -o-transition: opacity 1s ease-in-out;
-      transition: opacity 1s ease-in-out;
+      -webkit-transition: opacity .2s ease-in-out;
+      -moz-transition: opacity .2s ease-in-out;
+      -ms-transition: opacity .2s ease-in-out;
+      -o-transition: opacity .2s ease-in-out;
+      transition: opacity .2s ease-in-out;
     }
     .hidden { opacity: 0; }
     .transition {
-      transition: all .3s ease-in-out;
+      transition: all .3s ease;
     }
     .line { vector-effect: non-scaling-stroke; }
     .blue { color: blue }
@@ -23,14 +23,30 @@
     .dial > g > text {
       font-size: 6pt
     }
+    body {
+      padding: 0;
+      margin: 0;
+    }
   </style>
 </head>
 <body>
   <div id="elm"></div>
   <script type="text/javascript">
+    function window_size(){
+      var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+
+      return [w,100];
+    };
+
+
     var app = Elm.Main.init({
-      node: document.getElementById('elm')
+      node: document.getElementById('elm'),
+      flags: window_size()
     });
+
+    window.onresize = function(event) {
+      app.ports.windResized.send(window_size());
+    };
   </script>
 </body>
 </html>

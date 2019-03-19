@@ -56,7 +56,7 @@ calcScale ( w, h ) ( xRange, yRange ) =
                     1
 
                 False ->
-                    w / xRangeWidth
+                    toFloat w / xRangeWidth
 
         scaleY =
             case yRangeWidth == 0 of
@@ -64,15 +64,15 @@ calcScale ( w, h ) ( xRange, yRange ) =
                     1
 
                 False ->
-                    h / yRangeWidth
+                    toFloat h / yRangeWidth
     in
     ( scaleX, scaleY )
 
 
 calcTranslate : Size -> Scale -> XYRanges -> Translate
 calcTranslate ( w, h ) ( xScale, yScale ) ( ( minX, maxX ), ( minY, maxY ) ) =
-    ( (w - (minX + maxX) * xScale) / 2
-    , (h - minY * yScale - maxY * yScale) / 2 * -1
+    ( (toFloat w - (minX + maxX) * xScale) / 2
+    , (toFloat h - minY * yScale - maxY * yScale) / 2 * -1
     )
 
 

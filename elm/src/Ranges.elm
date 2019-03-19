@@ -6,7 +6,7 @@ type alias Range =
 
 
 type alias Size =
-    ( Float, Float )
+    ( Int, Int )
 
 
 type alias XY =
@@ -29,11 +29,11 @@ init floats =
     initWithMaybe min max
 
 
-initListFloats : Int -> Float -> List Float
+initListFloats : Int -> Int -> List Float
 initListFloats numOfDials width_ =
     let
         step =
-            width_ / toFloat numOfDials
+            toFloat width_ / toFloat numOfDials
     in
     List.range 0 (numOfDials - 1)
         |> List.map toFloat

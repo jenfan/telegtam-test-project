@@ -17,9 +17,9 @@ type alias Line =
 
 
 init :
-    { points : List XY
-    , id : Int
+    { id : Int
     , color : String
+    , points : List XY
     }
     -> Line
 init { points, id, color } =
