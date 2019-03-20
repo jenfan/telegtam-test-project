@@ -16,12 +16,18 @@
       transition: all .3s ease;
     }
     .line { vector-effect: non-scaling-stroke; }
-    .blue { color: blue }
-    .red { color: red }
-    .green { color: green }
-    .pink { color: pink }
     .dial > g > text {
       font-size: 6pt
+    }
+    .button {
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      margin: 40px 0px 10px 50px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 36px;
     }
     body {
       padding: 0;
@@ -34,8 +40,9 @@
   <script type="text/javascript">
     function window_size(){
       var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+      var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 
-      return [w,100];
+      return [w,h];
     };
 
 

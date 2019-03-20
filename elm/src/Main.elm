@@ -1,4 +1,4 @@
-module Main exposing (main)
+port module Main exposing (main)
 
 import Browser exposing (..)
 import Charts exposing (Chart)
@@ -13,69 +13,47 @@ import Svg.Attributes exposing (..)
 
 
 type Msg
-    = GridMsg Grids.Msg
+    = ChartMsg Charts.Msg
+    | WindowResized Size
 
 
-
---| GotCharts (Result Http.Error Chart)
-
-
-init : Size -> ( Grid, Cmd Msg )
+init : Size -> ( Chart, Cmd Msg )
 init size =
-    ( Charts.init |> Grids.init size, Cmd.none )
+    ( Charts.init size, Cmd.none )
 
 
-
---loadCharts : Cmd Msg
---loadCharts =
---    Http.get
---        { url = Charts.chartsUrl
---        , expect = Http.expectJson GotCharts Charts.decoder
---        }
-
-
-view : Grid -> List (Html Msg)
+view : Chart -> List (Html Msg)
 view grid =
     [ br [] []
     , br [] []
     , br [] []
-    , Html.map GridMsg <| Grids.view grid
-    , viewLineBtns grid.lines
+    , Html.map ChartMsg (Charts.view grid)
     ]
 
 
-viewLineBtns : List Line -> Html Msg
-viewLineBtns lines =
-    lines
-        |> List.map Grids.viewLineBtn
-        |> List.map (Html.map GridMsg)
-        |> div []
-
-
-update : Msg -> Grid -> ( Grid, Cmd Msg )
-update msg grid =
+update : Msg -> Chart -> ( Chart, Cmd Msg )
+update msg chart =
     case msg of
-        GridMsg subMsg ->
+        ChartMsg subMsg ->
             let
-                newGrid =
-                    Grids.update subMsg grid
+                newChart =
+                    Charts.update subMsg chart
             in
-            ( newGrid, Cmd.none )
+            ( newChart, Cmd.none )
+
+        WindowResized size ->
+            ( Charts.resize chart size, Cmd.none )
+
+
+port windResized : (Size -> msg) -> Sub msg
 
 
 subscriptions : Sub Msg
 subscriptions =
-    Sub.map GridMsg Grids.subscriptions
+    windResized WindowResized
 
 
-
---GotCharts result ->
---    case result of
---        Ok chart ->
---            ( Grids.init chart, Cmd.none )
-
-
-main : Program Size Grid Msg
+main : Program Size Chart Msg
 main =
     Browser.document
         { init = init

@@ -1,8 +1,7 @@
-port module Grids exposing (Grid, Msg, init, subscriptions, update, view, viewLineBtn)
+module Grids exposing (Grid, init, resize, toggleLine, view)
 
 import Dials
-import Html exposing (Html, button, div)
-import Html.Events exposing (onClick)
+import Html exposing (Html, div)
 import Lines exposing (Line)
 import Ranges exposing (Range, Size, XY, XYRanges)
 import Svg exposing (..)
@@ -14,74 +13,61 @@ import Tuples
 type alias Grid =
     { size : Size
     , margins : Int
-    , rowsNum : Int
     , xyRanges : Maybe XYRanges
     , transform : Transform
     , lines : List Line
+    , axes : Bool
     }
 
 
-init : Size -> List Line -> Grid
-init size lines =
+init : Size -> List Line -> Bool -> Grid
+init size lines axes =
     let
         xyRanges =
             Lines.valuesRange lines
     in
     { size = size
-    , margins = 10
-    , rowsNum = 6
+    , margins = 3
     , xyRanges = xyRanges
     , transform = Transforms.calcTransform size xyRanges
     , lines = lines
+    , axes = axes
     }
 
 
-type Msg
-    = ToggleLine Int
-    | WindowResized Size
+toggleLine : Grid -> Int -> Grid
+toggleLine grid lineId =
+    let
+        updateLine line =
+            case line.id == lineId of
+                True ->
+                    { line | active = not line.active }
+
+                False ->
+                    line
+
+        lines =
+            List.map updateLine grid.lines
+
+        xyRanges =
+            Lines.valuesRange <| List.filter .active lines
+    in
+    { grid
+        | lines = lines
+        , xyRanges = xyRanges
+        , transform = Transforms.calcTransform grid.size xyRanges
+    }
 
 
-port windResized : (Size -> msg) -> Sub msg
+resize : Grid -> Size -> Grid
+resize grid size =
+    { grid
+        | transform = Transforms.calcTransform size grid.xyRanges
+        , size = size
+    }
 
 
-update : Msg -> Grid -> Grid
-update msg grid =
-    case msg of
-        ToggleLine id ->
-            let
-                updateLine line =
-                    case line.id == id of
-                        True ->
-                            { line | active = not line.active }
-
-                        False ->
-                            line
-
-                lines =
-                    List.map updateLine grid.lines
-
-                xyRanges =
-                    Lines.valuesRange <| List.filter .active lines
-            in
-            { grid
-                | lines = lines
-                , xyRanges = xyRanges
-                , transform = Transforms.calcTransform grid.size xyRanges
-            }
-
-        WindowResized size ->
-            { grid
-                | transform = Transforms.calcTransform size grid.xyRanges
-                , size = size
-            }
-
-
-subscriptions : Sub Msg
-subscriptions =
-    windResized WindowResized
-
-
-view : Grid -> Html Msg
+view : Grid -> Html msg
 view grid =
     svg
         [ width <| String.fromInt <| Tuple.first grid.size
@@ -90,40 +76,35 @@ view grid =
 
         --, viewBox <| Transforms.viewbox grid.xyRanges grid.size
         ]
-        [ drawAxes grid.size grid.xyRanges grid.transform
-        , drawLines grid.lines grid.transform grid.size
+        [ drawDial grid
+        , drawLines grid
         ]
 
 
-viewLineBtn : Line -> Html Msg
-viewLineBtn line =
-    button
-        [ onClick (ToggleLine line.id)
-        , class line.color
-        ]
-        [ text <| Lines.title line ]
-
-
-drawLines : List Line -> Transform -> Size -> Svg Msg
-drawLines lines transform_ size =
-    lines
-        |> List.map (Lines.draw transform_ size)
+drawLines : Grid -> Svg msg
+drawLines grid =
+    grid.lines
+        |> List.map (Lines.draw grid.transform grid.size)
         |> g []
-        |> Transforms.transformGroup transform_
+        |> Transforms.transformGroup grid.transform
 
 
-drawAxes : Size -> Maybe XYRanges -> Transform -> Svg msg
-drawAxes size xyRanges transform_ =
-    case xyRanges of
-        Just range ->
-            let
-                dial =
-                    Dials.init size
-            in
-            Dials.view size range transform_ dial
+drawDial : Grid -> Svg msg
+drawDial grid =
+    if grid.axes then
+        case grid.xyRanges of
+            Just range ->
+                let
+                    dial =
+                        Dials.init grid.size
+                in
+                Dials.view grid.size range grid.transform dial
 
-        Nothing ->
-            svg [] []
+            Nothing ->
+                g [] []
+
+    else
+        g [] []
 
 
 viewBoxAttr : Size -> Int -> Attribute msg
