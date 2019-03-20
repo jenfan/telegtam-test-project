@@ -24,10 +24,7 @@ init size =
 
 view : Chart -> List (Html Msg)
 view grid =
-    [ br [] []
-    , br [] []
-    , br [] []
-    , Html.map ChartMsg (Charts.view grid)
+    [ Html.map ChartMsg (Charts.view grid)
     ]
 
 

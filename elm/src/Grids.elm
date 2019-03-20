@@ -20,14 +20,14 @@ type alias Grid =
     }
 
 
-init : Size -> List Line -> Bool -> Grid
-init size lines axes =
+init : { size : Size, lines : List Line, axes : Bool, margins : Int } -> Grid
+init { size, lines, axes, margins } =
     let
         xyRanges =
             Lines.valuesRange lines
     in
     { size = size
-    , margins = 3
+    , margins = margins
     , xyRanges = xyRanges
     , transform = Transforms.calcTransform size xyRanges
     , lines = lines
@@ -109,10 +109,10 @@ drawDial grid =
 
 viewBoxAttr : Size -> Int -> Attribute msg
 viewBoxAttr ( w, h ) margin =
-    [ 0 - margin
+    [ 0 - margin * 5
     , (h + margin) * -1
-    , w + margin * 2
-    , h + margin * 2
+    , w + margin * 10
+    , h + margin * 10
     ]
         |> List.map String.fromInt
         |> String.join " "

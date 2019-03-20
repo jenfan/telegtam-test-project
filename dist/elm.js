@@ -5334,32 +5334,39 @@ var author$project$Transforms$calcTransform = F2(
 			};
 		}
 	});
-var author$project$Grids$init = F3(
-	function (size, lines, axes) {
-		var xyRanges = author$project$Lines$valuesRange(lines);
-		return {
-			axes: axes,
-			lines: lines,
-			margins: 3,
-			size: size,
-			transform: A2(author$project$Transforms$calcTransform, size, xyRanges),
-			xyRanges: xyRanges
-		};
-	});
+var author$project$Grids$init = function (_n0) {
+	var size = _n0.size;
+	var lines = _n0.lines;
+	var axes = _n0.axes;
+	var margins = _n0.margins;
+	var xyRanges = author$project$Lines$valuesRange(lines);
+	return {
+		axes: axes,
+		lines: lines,
+		margins: margins,
+		size: size,
+		transform: A2(author$project$Transforms$calcTransform, size, xyRanges),
+		xyRanges: xyRanges
+	};
+};
 var elm$core$Basics$False = {$: 'False'};
 var author$project$Charts$init = function (size) {
 	var lines = author$project$Data$init;
 	return {
-		frame: A3(
-			author$project$Grids$init,
-			author$project$Charts$frameSize(size),
-			lines,
-			true),
-		map: A3(
-			author$project$Grids$init,
-			author$project$Charts$mapSize(size),
-			lines,
-			false),
+		frame: author$project$Grids$init(
+			{
+				axes: true,
+				lines: lines,
+				margins: 10,
+				size: author$project$Charts$frameSize(size)
+			}),
+		map: author$project$Grids$init(
+			{
+				axes: false,
+				lines: lines,
+				margins: 0,
+				size: author$project$Charts$mapSize(size)
+			}),
 		size: size
 	};
 };
@@ -5928,7 +5935,7 @@ var author$project$Dials$textX = F2(
 					author$project$Points$renderX(point)),
 					elm$svg$Svg$Attributes$y(
 					author$project$Points$renderY(point)),
-					elm$svg$Svg$Attributes$transform('translate(3,10)')
+					elm$svg$Svg$Attributes$transform('translate(3,70)')
 				]),
 			_List_fromArray(
 				[
@@ -5961,10 +5968,12 @@ var author$project$Dials$hLine = F2(
 					elm$svg$Svg$Attributes$y2(
 					author$project$Points$renderY(point)),
 					elm$svg$Svg$Attributes$stroke('black'),
-					elm$svg$Svg$Attributes$strokeWidth('0.1')
+					elm$svg$Svg$Attributes$strokeWidth('0.1'),
+					elm$svg$Svg$Attributes$transform('scale(1.5,1) translate(-10,0)')
 				]),
 			_List_Nil);
 	});
+var elm$svg$Svg$Attributes$alignmentBaseline = _VirtualDom_attribute('alignment-baseline');
 var author$project$Dials$textY = F2(
 	function (title, point) {
 		return A2(
@@ -5975,7 +5984,8 @@ var author$project$Dials$textY = F2(
 					author$project$Points$renderX(point)),
 					elm$svg$Svg$Attributes$y(
 					author$project$Points$renderY(point)),
-					elm$svg$Svg$Attributes$transform('translate(-10,-3)')
+					elm$svg$Svg$Attributes$alignmentBaseline('text-after-edge'),
+					elm$svg$Svg$Attributes$transform('translate(-10,0)')
 				]),
 			_List_fromArray(
 				[
@@ -6256,7 +6266,7 @@ var author$project$Grids$viewBoxAttr = F2(
 					elm$core$List$map,
 					elm$core$String$fromInt,
 					_List_fromArray(
-						[0 - margin, (h + margin) * (-1), w + (margin * 2), h + (margin * 2)]))));
+						[0 - (margin * 5), (h + margin) * (-1), w + (margin * 10), h + (margin * 10)]))));
 	});
 var elm$svg$Svg$svg = elm$svg$Svg$trustedNode('svg');
 var elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
@@ -6292,15 +6302,11 @@ var author$project$Charts$view = function (chart) {
 var author$project$Main$ChartMsg = function (a) {
 	return {$: 'ChartMsg', a: a};
 };
-var elm$html$Html$br = _VirtualDom_node('br');
 var elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
 var elm$html$Html$map = elm$virtual_dom$VirtualDom$map;
 var author$project$Main$view = function (grid) {
 	return _List_fromArray(
 		[
-			A2(elm$html$Html$br, _List_Nil, _List_Nil),
-			A2(elm$html$Html$br, _List_Nil, _List_Nil),
-			A2(elm$html$Html$br, _List_Nil, _List_Nil),
 			A2(
 			elm$html$Html$map,
 			author$project$Main$ChartMsg,

@@ -28,8 +28,8 @@ init size =
             Data.init
     in
     { size = size
-    , frame = Grids.init (frameSize size) lines True
-    , map = Grids.init (mapSize size) lines False
+    , frame = Grids.init { size = frameSize size, lines = lines, axes = True, margins = 10 }
+    , map = Grids.init { size = mapSize size, lines = lines, axes = False, margins = 0 }
     }
 
 

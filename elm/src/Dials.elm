@@ -69,6 +69,7 @@ hLine w point =
         , y2 <| Points.renderY point
         , stroke "black"
         , strokeWidth "0.1"
+        , transform <| "scale(1.5,1) translate(-10,0)"
         ]
         []
 
@@ -76,9 +77,10 @@ hLine w point =
 textY : String -> Point -> Svg msg
 textY title point =
     text_
-        [ Svg.Attributes.x <| Points.renderX point
-        , Svg.Attributes.y <| Points.renderY point
-        , transform <| "translate(-10,-3)"
+        [ x <| Points.renderX point
+        , y <| Points.renderY point
+        , alignmentBaseline "text-after-edge"
+        , transform <| "translate(-10,0)"
         ]
         [ text title ]
 
@@ -86,8 +88,8 @@ textY title point =
 textX : String -> Point -> Svg msg
 textX title point =
     text_
-        [ Svg.Attributes.x <| Points.renderX point
-        , Svg.Attributes.y <| Points.renderY point
-        , transform <| "translate(3,10)"
+        [ x <| Points.renderX point
+        , y <| Points.renderY point
+        , transform <| "translate(3,70)"
         ]
         [ text title ]
