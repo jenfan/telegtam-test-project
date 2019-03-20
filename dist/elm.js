@@ -5899,6 +5899,21 @@ var author$project$Charts$viewLineBtns = function (lines) {
 		_List_Nil,
 		A2(elm$core$List$map, author$project$Charts$viewLineBtn, lines));
 };
+var elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
+var author$project$Grids$viewBoxAttr = F2(
+	function (_n0, margin) {
+		var w = _n0.a;
+		var h = _n0.b;
+		return elm$svg$Svg$Attributes$viewBox(
+			A2(
+				elm$core$String$join,
+				' ',
+				A2(
+					elm$core$List$map,
+					elm$core$String$fromInt,
+					_List_fromArray(
+						[0 - (margin * 5), (h + margin) * (-1), w + (margin * 10), h + (margin * 10)]))));
+	});
 var author$project$Dials$Dial = F4(
 	function (xNotchCount, yNotchCount, stepX, stepY) {
 		return {stepX: stepX, stepY: stepY, xNotchCount: xNotchCount, yNotchCount: yNotchCount};
@@ -6119,7 +6134,32 @@ var author$project$Dials$view = F4(
 					hDivs)
 				]));
 	});
-var author$project$Grids$drawDial = function (grid) {
+var elm$svg$Svg$rect = elm$svg$Svg$trustedNode('rect');
+var elm$svg$Svg$Attributes$fillOpacity = _VirtualDom_attribute('fill-opacity');
+var elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
+var elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
+var author$project$Grids$viewMapBox = function (_n0) {
+	var width = _n0.a;
+	var height = _n0.b;
+	var boxWidth = elm$core$Basics$round(width / 4);
+	var x = width - boxWidth;
+	return A2(
+		elm$svg$Svg$rect,
+		_List_fromArray(
+			[
+				elm$svg$Svg$Attributes$width(
+				elm$core$String$fromInt(boxWidth)),
+				elm$svg$Svg$Attributes$height(
+				elm$core$String$fromInt(height)),
+				elm$svg$Svg$Attributes$x(
+				elm$core$String$fromInt(x)),
+				elm$svg$Svg$Attributes$y(
+				elm$core$String$fromInt((-1) * height)),
+				elm$svg$Svg$Attributes$fillOpacity('0.25')
+			]),
+		_List_Nil);
+};
+var author$project$Grids$viewDialOrMaxBox = function (grid) {
 	if (grid.axes) {
 		var _n0 = grid.xyRanges;
 		if (_n0.$ === 'Just') {
@@ -6130,7 +6170,7 @@ var author$project$Grids$drawDial = function (grid) {
 			return A2(elm$svg$Svg$g, _List_Nil, _List_Nil);
 		}
 	} else {
-		return A2(elm$svg$Svg$g, _List_Nil, _List_Nil);
+		return author$project$Grids$viewMapBox(grid.size);
 	}
 };
 var elm$core$Tuple$second = function (_n0) {
@@ -6241,7 +6281,7 @@ var author$project$Transforms$transformGroup = F2(
 			transform_,
 			A2(author$project$Transforms$scaleGroup, transform_, svg_));
 	});
-var author$project$Grids$drawLines = function (grid) {
+var author$project$Grids$viewLines = function (grid) {
 	return A2(
 		author$project$Transforms$transformGroup,
 		grid.transform,
@@ -6253,24 +6293,7 @@ var author$project$Grids$drawLines = function (grid) {
 				A2(author$project$Lines$draw, grid.transform, grid.size),
 				grid.lines)));
 };
-var elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
-var author$project$Grids$viewBoxAttr = F2(
-	function (_n0, margin) {
-		var w = _n0.a;
-		var h = _n0.b;
-		return elm$svg$Svg$Attributes$viewBox(
-			A2(
-				elm$core$String$join,
-				' ',
-				A2(
-					elm$core$List$map,
-					elm$core$String$fromInt,
-					_List_fromArray(
-						[0 - (margin * 5), (h + margin) * (-1), w + (margin * 10), h + (margin * 10)]))));
-	});
 var elm$svg$Svg$svg = elm$svg$Svg$trustedNode('svg');
-var elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
-var elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
 var author$project$Grids$view = function (grid) {
 	return A2(
 		elm$svg$Svg$svg,
@@ -6284,8 +6307,8 @@ var author$project$Grids$view = function (grid) {
 			]),
 		_List_fromArray(
 			[
-				author$project$Grids$drawDial(grid),
-				author$project$Grids$drawLines(grid)
+				author$project$Grids$viewDialOrMaxBox(grid),
+				author$project$Grids$viewLines(grid)
 			]));
 };
 var author$project$Charts$view = function (chart) {

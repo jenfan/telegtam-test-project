@@ -5,7 +5,7 @@ import Html exposing (Html, div)
 import Lines exposing (Line)
 import Ranges exposing (Range, Size, XY, XYRanges)
 import Svg exposing (..)
-import Svg.Attributes exposing (..)
+import Svg.Attributes as Attr exposing (..)
 import Transforms exposing (Transform)
 import Tuples
 
@@ -33,6 +33,10 @@ init { size, lines, axes, margins } =
     , lines = lines
     , axes = axes
     }
+
+
+
+-- UPDATE
 
 
 toggleLine : Grid -> Int -> Grid
@@ -67,6 +71,10 @@ resize grid size =
     }
 
 
+
+-- VIEW
+
+
 view : Grid -> Html msg
 view grid =
     svg
@@ -76,21 +84,21 @@ view grid =
 
         --, viewBox <| Transforms.viewbox grid.xyRanges grid.size
         ]
-        [ drawDial grid
-        , drawLines grid
+        [ viewDialOrMaxBox grid
+        , viewLines grid
         ]
 
 
-drawLines : Grid -> Svg msg
-drawLines grid =
+viewLines : Grid -> Svg msg
+viewLines grid =
     grid.lines
         |> List.map (Lines.draw grid.transform grid.size)
         |> g []
         |> Transforms.transformGroup grid.transform
 
 
-drawDial : Grid -> Svg msg
-drawDial grid =
+viewDialOrMaxBox : Grid -> Svg msg
+viewDialOrMaxBox grid =
     if grid.axes then
         case grid.xyRanges of
             Just range ->
@@ -104,7 +112,30 @@ drawDial grid =
                 g [] []
 
     else
-        g [] []
+        viewMapBox grid.size
+
+
+viewMapBox : Size -> Svg msg
+viewMapBox ( width, height ) =
+    let
+        boxWidth =
+            toFloat width / 4 |> round
+
+        x =
+            width - boxWidth
+    in
+    Svg.rect
+        [ Attr.width <| String.fromInt <| boxWidth
+        , Attr.height <| String.fromInt height
+        , Attr.x <| String.fromInt x
+        , Attr.y <| String.fromInt <| -1 * height
+
+        --, Attr.cursor cursor
+        , Attr.fillOpacity "0.25"
+
+        --, Draggable.mouseTrigger "" DragMsg
+        ]
+        []
 
 
 viewBoxAttr : Size -> Int -> Attribute msg
