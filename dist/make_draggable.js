@@ -2,51 +2,39 @@ function make_draggable(app) {
 
   app.ports.initListeners.subscribe(function (mapBox) {
     var svg = document.getElementById(mapBox.id);
-    var offset, x=0, selectedElement, startDragX;
+    var offset, startX=0, selectedElement, startXPosition;
 
     function getMousePositionX(evt) {
-      var CTM = selectedElement.getScreenCTM();
       if (evt.touches) { evt = evt.touches[0]; }
-      // return {
-      //   (evt.clientX - CTM.e) / CTM.a
-      // };
       return evt.clientX;
     }
 
     function startDrag(evt) {
-        evt.preventDefault()
         selectedElement = evt.target;
-        startDragX = getMousePositionX(evt);
-        // offset.x -= parseFloat(selectedElement.getAttributeNS(null, "x"));
-        console.log("start drag");
-        x = parseInt(selectedElement.getAttribute('dragx')) || 0;
-        console.log("parsed X:", x);
+        startXPosition = getMousePositionX(evt);
+        startX = parseInt(selectedElement.getAttribute('dragx')) || 0;
     }
 
     function drag(evt) {
       if (selectedElement) {
-        dx = startDragX - getMousePositionX(evt);
-        var deltaX = x - dx;
-        // selectedElement.setAttribute('transform', 'translate(' + deltaX + ',0)');
-        selectedElement.setAttribute('dragx', deltaX);
-        app.ports.boxMoved.send(deltaX);
+        dx = startXPosition - getMousePositionX(evt);
+        app.ports.boxMoved.send(startX - dx);
       }
     }
 
     function endDrag(evt) {
       selectedElement = false;
-      console.log("end drag");
     }
 
-    svg.addEventListener('mousedown', startDrag);
-    svg.addEventListener('mousemove', drag);
-    svg.addEventListener('mouseup', endDrag);
-    // svg.addEventListener('mouseleave', endDrag, false);
-    svg.addEventListener('touchstart', startDrag);
-    svg.addEventListener('touchmove', drag);
-    svg.addEventListener('touchend', endDrag);
-    svg.addEventListener('touchleave', endDrag);
-    svg.addEventListener('touchcancel', endDrag);
+
+    svg.addEventListener('mousedown', startDrag, {capture: true, passive: true});
+    svg.addEventListener('mousemove', drag, {capture: true, passive: true});
+    svg.addEventListener('mouseup', endDrag, {capture: true, passive: true});
+    svg.addEventListener('touchstart', startDrag, {capture: true, passive: true});
+    svg.addEventListener('touchmove', drag, {capture: true, passive: true});
+    svg.addEventListener('touchend', endDrag, {capture: true, passive: true});
+    svg.addEventListener('touchleave', endDrag, {capture: true, passive: true});
+    svg.addEventListener('touchcancel', endDrag, {capture: true, passive: true});
 
   })
 }

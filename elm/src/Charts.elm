@@ -2,6 +2,8 @@ module Charts exposing (Chart, Msg, init, resize, subscriptions, update, view, v
 
 import Data
 import Grids exposing (Grid)
+import Grids.Frame as Frame
+import Grids.Map as Map
 import Html exposing (Html, button, div, text)
 import Html.Attributes
 import Html.Events exposing (onClick)
@@ -19,7 +21,7 @@ type alias Chart =
 
 type Msg
     = ToggleLine Int
-    | GridsMsg Grids.Msg
+    | MapMsg Map.Msg
 
 
 init : Size -> ( Chart, Cmd Msg )
@@ -31,20 +33,17 @@ init size =
         lines =
             Data.init
 
-        ( frame, _ ) =
-            Grids.init
+        frame =
+            Frame.init
                 { size = frameSize size
                 , lines = lines
-                , mainFrame = True
                 , margins = 10
-                , id = id
                 }
 
         ( map, cmd ) =
-            Grids.init
+            Map.init
                 { size = mapSize size
                 , lines = lines
-                , mainFrame = False
                 , margins = 0
                 , id = id
                 }
@@ -53,7 +52,7 @@ init size =
       , frame = frame
       , map = map
       }
-    , Cmd.map GridsMsg cmd
+    , Cmd.map MapMsg cmd
     )
 
 
@@ -77,22 +76,22 @@ update msg chart =
                 , map = Grids.toggleLine chart.map id
             }
 
-        GridsMsg subMsg ->
-            { chart | map = Grids.update subMsg chart.map }
+        MapMsg subMsg ->
+            { chart | map = Map.update subMsg chart.map }
 
 
 resize : Chart -> Size -> Chart
 resize chart size =
     { chart
-        | frame = Grids.resize chart.frame (frameSize size)
-        , map = Grids.resize chart.map (mapSize size)
+        | frame = Grids.resize (frameSize size) chart.frame
+        , map = Map.resize (mapSize size) chart.map
         , size = size
     }
 
 
 subscriptions : Sub Msg
 subscriptions =
-    Sub.map GridsMsg Grids.subscriptions
+    Sub.map MapMsg Map.subscriptions
 
 
 
@@ -102,8 +101,8 @@ subscriptions =
 view : Chart -> Html Msg
 view chart =
     div []
-        [ Html.map GridsMsg (Grids.view chart.frame)
-        , Html.map GridsMsg (Grids.view chart.map)
+        [ Frame.view chart.frame
+        , Html.map MapMsg (Map.view chart.map)
         , viewLineBtns chart.map.lines
         ]
 
