@@ -1,8 +1,9 @@
-module Grids exposing (Grid, init, resize, toggleLine, view)
+module Grids exposing (Grid, Msg, init, resize, subscriptions, toggleLine, update, view)
 
 import Dials
 import Html exposing (Html, div)
 import Lines exposing (Line)
+import MapBoxes exposing (MapBox)
 import Ranges exposing (Range, Size, XY, XYRanges)
 import Svg exposing (..)
 import Svg.Attributes as Attr exposing (..)
@@ -16,27 +17,58 @@ type alias Grid =
     , xyRanges : Maybe XYRanges
     , transform : Transform
     , lines : List Line
-    , axes : Bool
+    , mainFrame : Bool
+    , mapBox : Maybe MapBox
     }
 
 
-init : { size : Size, lines : List Line, axes : Bool, margins : Int } -> Grid
-init { size, lines, axes, margins } =
+type Msg
+    = MapBoxMsg MapBoxes.Msg
+
+
+init : { size : Size, lines : List Line, mainFrame : Bool, margins : Int, id : String } -> ( Grid, Cmd Msg )
+init { size, lines, mainFrame, margins, id } =
     let
         xyRanges =
             Lines.valuesRange lines
+
+        ( mapBox, cmd ) =
+            case mainFrame of
+                False ->
+                    MapBoxes.init size id
+
+                True ->
+                    ( Nothing, Cmd.none )
     in
-    { size = size
-    , margins = margins
-    , xyRanges = xyRanges
-    , transform = Transforms.calcTransform size xyRanges
-    , lines = lines
-    , axes = axes
-    }
+    ( { size = size
+      , margins = margins
+      , xyRanges = xyRanges
+      , transform = Transforms.calcTransform size xyRanges
+      , lines = lines
+      , mainFrame = mainFrame
+      , mapBox = mapBox
+      }
+    , Cmd.map MapBoxMsg cmd
+    )
 
 
 
 -- UPDATE
+
+
+update : Msg -> Grid -> Grid
+update msg grid =
+    case msg of
+        MapBoxMsg subMsg ->
+            case grid.mapBox of
+                Just mapBox ->
+                    { grid
+                        | mapBox =
+                            Just (MapBoxes.update subMsg mapBox)
+                    }
+
+                Nothing ->
+                    grid
 
 
 toggleLine : Grid -> Int -> Grid
@@ -71,11 +103,16 @@ resize grid size =
     }
 
 
+subscriptions : Sub Msg
+subscriptions =
+    Sub.map MapBoxMsg MapBoxes.subscriptions
+
+
 
 -- VIEW
 
 
-view : Grid -> Html msg
+view : Grid -> Html Msg
 view grid =
     svg
         [ width <| String.fromInt <| Tuple.first grid.size
@@ -97,9 +134,9 @@ viewLines grid =
         |> Transforms.transformGroup grid.transform
 
 
-viewDialOrMaxBox : Grid -> Svg msg
+viewDialOrMaxBox : Grid -> Svg Msg
 viewDialOrMaxBox grid =
-    if grid.axes then
+    if grid.mainFrame then
         case grid.xyRanges of
             Just range ->
                 let
@@ -112,30 +149,17 @@ viewDialOrMaxBox grid =
                 g [] []
 
     else
-        viewMapBox grid.size
+        viewMapBox grid
 
 
-viewMapBox : Size -> Svg msg
-viewMapBox ( width, height ) =
-    let
-        boxWidth =
-            toFloat width / 4 |> round
+viewMapBox : Grid -> Svg Msg
+viewMapBox grid =
+    case grid.mapBox of
+        Just mapBox ->
+            Svg.map MapBoxMsg (MapBoxes.view mapBox)
 
-        x =
-            width - boxWidth
-    in
-    Svg.rect
-        [ Attr.width <| String.fromInt <| boxWidth
-        , Attr.height <| String.fromInt height
-        , Attr.x <| String.fromInt x
-        , Attr.y <| String.fromInt <| -1 * height
-
-        --, Attr.cursor cursor
-        , Attr.fillOpacity "0.25"
-
-        --, Draggable.mouseTrigger "" DragMsg
-        ]
-        []
+        Nothing ->
+            g [] []
 
 
 viewBoxAttr : Size -> Int -> Attribute msg

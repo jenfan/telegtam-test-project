@@ -1,4 +1,4 @@
-module Charts exposing (Chart, Msg, init, resize, update, view, viewLineBtn)
+module Charts exposing (Chart, Msg, init, resize, subscriptions, update, view, viewLineBtn)
 
 import Data
 import Grids exposing (Grid)
@@ -19,28 +19,53 @@ type alias Chart =
 
 type Msg
     = ToggleLine Int
+    | GridsMsg Grids.Msg
 
 
-init : Size -> Chart
+init : Size -> ( Chart, Cmd Msg )
 init size =
     let
+        id =
+            "123"
+
         lines =
             Data.init
+
+        ( frame, _ ) =
+            Grids.init
+                { size = frameSize size
+                , lines = lines
+                , mainFrame = True
+                , margins = 10
+                , id = id
+                }
+
+        ( map, cmd ) =
+            Grids.init
+                { size = mapSize size
+                , lines = lines
+                , mainFrame = False
+                , margins = 0
+                , id = id
+                }
     in
-    { size = size
-    , frame = Grids.init { size = frameSize size, lines = lines, axes = True, margins = 10 }
-    , map = Grids.init { size = mapSize size, lines = lines, axes = False, margins = 0 }
-    }
+    ( { size = size
+      , frame = frame
+      , map = map
+      }
+    , Cmd.map GridsMsg cmd
+    )
 
 
 frameSize : Size -> Size
 frameSize size =
-    Tuple.mapSecond (\x -> toFloat x * 0.4 |> round) size
+    size
+        |> Tuple.mapSecond (\y -> toFloat y * 0.4 |> round)
 
 
 mapSize : Size -> Size
 mapSize size =
-    Tuple.mapSecond (\x -> toFloat x * 0.04 |> round) size
+    Tuple.mapSecond (\y -> toFloat y * 0.04 |> round) size
 
 
 update : Msg -> Chart -> Chart
@@ -52,6 +77,9 @@ update msg chart =
                 , map = Grids.toggleLine chart.map id
             }
 
+        GridsMsg subMsg ->
+            { chart | map = Grids.update subMsg chart.map }
+
 
 resize : Chart -> Size -> Chart
 resize chart size =
@@ -62,11 +90,20 @@ resize chart size =
     }
 
 
+subscriptions : Sub Msg
+subscriptions =
+    Sub.map GridsMsg Grids.subscriptions
+
+
+
+-- VIEW
+
+
 view : Chart -> Html Msg
 view chart =
     div []
-        [ Grids.view chart.frame
-        , Grids.view chart.map
+        [ Html.map GridsMsg (Grids.view chart.frame)
+        , Html.map GridsMsg (Grids.view chart.map)
         , viewLineBtns chart.map.lines
         ]
 

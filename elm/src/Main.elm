@@ -19,7 +19,11 @@ type Msg
 
 init : Size -> ( Chart, Cmd Msg )
 init size =
-    ( Charts.init size, Cmd.none )
+    let
+        ( chart, cmd ) =
+            Charts.init size
+    in
+    ( chart, Cmd.map ChartMsg cmd )
 
 
 view : Chart -> List (Html Msg)
@@ -32,11 +36,7 @@ update : Msg -> Chart -> ( Chart, Cmd Msg )
 update msg chart =
     case msg of
         ChartMsg subMsg ->
-            let
-                newChart =
-                    Charts.update subMsg chart
-            in
-            ( newChart, Cmd.none )
+            ( Charts.update subMsg chart, Cmd.none )
 
         WindowResized size ->
             ( Charts.resize chart size, Cmd.none )
@@ -47,7 +47,10 @@ port windResized : (Size -> msg) -> Sub msg
 
 subscriptions : Sub Msg
 subscriptions =
-    windResized WindowResized
+    Sub.batch
+        [ windResized WindowResized
+        , Sub.map ChartMsg Charts.subscriptions
+        ]
 
 
 main : Program Size Chart Msg

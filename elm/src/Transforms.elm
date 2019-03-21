@@ -26,12 +26,10 @@ calcTransform size maybeXYRange =
         Just xyRanges ->
             let
                 scale =
-                    Debug.log "scale" <| calcScale size xyRanges
+                    calcScale size xyRanges
 
                 translate =
-                    Debug.log "xRange and yRange:" xyRanges
-                        |> calcTranslate size scale
-                        |> Debug.log "translate"
+                    calcTranslate size scale xyRanges
             in
             { scale = scale
             , translate = translate

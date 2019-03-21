@@ -3,6 +3,7 @@
 <head>
   <title>telegram test charts</title>
   <script type="text/javascript" src="./elm.js"></script>
+  <script type="text/javascript" src="./make_draggable.js"></script>
   <style type="text/css">
     .line {
       -webkit-transition: opacity .2s ease-in-out;
@@ -40,22 +41,26 @@
 <body>
   <div id="elm"></div>
   <script type="text/javascript">
-    function window_size(){
-      var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-      var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-
-      return [w,h];
-    };
-
 
     var app = Elm.Main.init({
       node: document.getElementById('elm'),
       flags: window_size()
     });
 
+    function window_size(){
+      var w =
+        Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+      var h =
+        Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+
+      return [w,h];
+    };
+
     window.onresize = function(event) {
       app.ports.windResized.send(window_size());
     };
+
+    make_draggable(app);
   </script>
 </body>
 </html>
