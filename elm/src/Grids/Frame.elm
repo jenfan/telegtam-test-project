@@ -1,4 +1,4 @@
-module Grids.Frame exposing (init, view)
+module Grids.Frame exposing (Frame, init, updatePosition, view)
 
 import Dials
 import Grids exposing (Grid)
@@ -11,48 +11,91 @@ import Svg.Attributes as Attr exposing (..)
 import Transforms exposing (Transform)
 
 
-init : { size : Size, lines : List Line, margins : Int } -> Grid
-init { size, lines, margins } =
+type alias Frame =
+    Grid { position : Range }
+
+
+init :
+    { size : Size
+    , lines : List Line
+    , margins : Int
+    , position : Range
+    }
+    -> Frame
+init { size, lines, margins, position } =
     let
         valuesRange =
             Lines.valuesRange lines
+
+        newSize =
+            calcSizeOfPosition position size
     in
     { size = size
     , margins = margins
     , valuesRange = valuesRange
-    , transform = Transforms.calcTransform size valuesRange
+    , transform = Transforms.calcTransform newSize valuesRange
     , lines = lines
-    , mapBox = Nothing
+    , position = position
     }
 
 
+calcSizeOfPosition : Range -> Size -> Size
+calcSizeOfPosition ( x1, x2 ) size =
+    size
+        |> Tuple.mapFirst (\x -> toFloat x / (x2 - x1) |> round)
+        |> Debug.log "size: "
 
--- VIEW
+
+updatePosition : Range -> Frame -> Frame
+updatePosition position ({ size } as frame) =
+    let
+        newSize =
+            calcSizeOfPosition position size
+    in
+    { frame
+        | transform = Transforms.calcTransform newSize frame.valuesRange
+        , position = position
+    }
 
 
-view : Grid -> Html msg
-view grid =
+view : Frame -> Html msg
+view frame =
     svg
-        [ width <| String.fromInt <| Tuple.first grid.size
-        , height <| String.fromInt <| Tuple.second grid.size
-        , viewBoxAttr grid.size grid.margins
+        [ width <| String.fromInt <| Tuple.first frame.size
+        , height <| String.fromInt <| Tuple.second frame.size
+        , viewBoxAttr frame.size frame.margins
+        , preserveAspectRatio "none"
 
-        --, viewBox <| Transforms.viewbox grid.valuesRange grid.size
+        --, viewBox <| Transforms.viewbox frame.valuesRange frame.size
         ]
-        [ viewDial grid
-        , Grids.viewLines grid
+        [ viewDial frame
+        , viewLines frame
         ]
 
 
-viewDial : Grid -> Svg msg
-viewDial grid =
-    case grid.valuesRange of
+viewLines : Frame -> Svg msg
+viewLines frame =
+    g [ translatePositionAttr frame ]
+        [ Grids.viewLines frame ]
+
+
+translatePositionAttr : Frame -> Attribute msg
+translatePositionAttr frame =
+    frame.position
+        |> Tuple.mapFirst (\x -> x * -1 * (frame.size |> Tuple.first |> toFloat))
+        |> Tuple.mapSecond (\y -> y * 0)
+        |> Transforms.translateAttr
+
+
+viewDial : Frame -> Svg msg
+viewDial frame =
+    case frame.valuesRange of
         Just range ->
             let
                 dial =
-                    Dials.init grid.size
+                    Dials.init frame.size
             in
-            Dials.view grid.size range grid.transform dial
+            Dials.view frame.size range frame.transform dial
 
         Nothing ->
             g [] []
@@ -60,9 +103,9 @@ viewDial grid =
 
 viewBoxAttr : Size -> Int -> Attribute msg
 viewBoxAttr ( w, h ) margin =
-    [ 0 - margin * 5
+    [ 0 - margin
     , (h + margin) * -1
-    , w + margin * 10
+    , w + margin
     , h + margin * 10
     ]
         |> List.map String.fromInt

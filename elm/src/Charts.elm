@@ -2,8 +2,8 @@ module Charts exposing (Chart, Msg, init, resize, subscriptions, update, view, v
 
 import Data
 import Grids exposing (Grid)
-import Grids.Frame as Frame
-import Grids.Map as Map
+import Grids.Frame as Frame exposing (Frame)
+import Grids.Map as Map exposing (Map)
 import Html exposing (Html, button, div, text)
 import Html.Attributes
 import Html.Events exposing (onClick)
@@ -14,8 +14,8 @@ import Svg.Attributes exposing (..)
 
 type alias Chart =
     { size : Size
-    , frame : Grid
-    , map : Grid
+    , frame : Frame
+    , map : Map
     }
 
 
@@ -33,19 +33,20 @@ init size =
         lines =
             Data.init
 
-        frame =
-            Frame.init
-                { size = frameSize size
-                , lines = lines
-                , margins = 10
-                }
-
         ( map, cmd ) =
             Map.init
                 { size = mapSize size
                 , lines = lines
                 , margins = 0
                 , id = id
+                }
+
+        frame =
+            Frame.init
+                { size = frameSize size
+                , lines = lines
+                , margins = 10
+                , position = map.mapBox.position
                 }
     in
     ( { size = size
@@ -77,7 +78,14 @@ update msg chart =
             }
 
         MapMsg subMsg ->
-            { chart | map = Map.update subMsg chart.map }
+            let
+                map =
+                    Map.update subMsg chart.map
+
+                frame =
+                    Frame.updatePosition map.mapBox.position chart.frame
+            in
+            { chart | map = map, frame = frame }
 
 
 resize : Chart -> Size -> Chart

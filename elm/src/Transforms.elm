@@ -82,8 +82,8 @@ scaleAttr { scale } =
         |> transform
 
 
-translateAttr : Transform -> Attribute msg
-translateAttr { translate } =
+translateAttr : Translate -> Attribute msg
+translateAttr translate =
     translate
         |> joinWithComma
         |> (\v -> "translate(" ++ v ++ ")")
@@ -100,7 +100,7 @@ transformGroup transform_ svg_ =
 translateGroup : Transform -> Svg msg -> Svg msg
 translateGroup transform_ svg_ =
     g
-        [ translateAttr transform_
+        [ translateAttr transform_.translate
         , class "transition"
         ]
         [ svg_ ]

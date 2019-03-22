@@ -9,17 +9,17 @@ import Svg.Attributes as Attr exposing (..)
 import Transforms exposing (Transform)
 
 
-type alias Grid =
-    { size : Size
-    , margins : Int
-    , valuesRange : Maybe XYRanges
-    , transform : Transform
-    , lines : List Line
-    , mapBox : Maybe MapBox
+type alias Grid a =
+    { a
+        | size : Size
+        , margins : Int
+        , valuesRange : Maybe XYRanges
+        , transform : Transform
+        , lines : List Line
     }
 
 
-toggleLine : Grid -> Int -> Grid
+toggleLine : Grid a -> Int -> Grid a
 toggleLine grid lineId =
     let
         updateLine line =
@@ -43,7 +43,7 @@ toggleLine grid lineId =
     }
 
 
-resize : Size -> Grid -> Grid
+resize : Size -> Grid a -> Grid a
 resize size grid =
     { grid
         | transform = Transforms.calcTransform size grid.valuesRange
@@ -55,7 +55,7 @@ resize size grid =
 -- VIEW
 
 
-viewLines : Grid -> Svg msg
+viewLines : Grid a -> Svg msg
 viewLines grid =
     grid.lines
         |> List.map (Lines.draw grid.transform grid.size)

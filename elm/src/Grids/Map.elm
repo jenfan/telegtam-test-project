@@ -1,4 +1,4 @@
-module Grids.Map exposing (Msg, init, resize, subscriptions, update, view)
+module Grids.Map exposing (Map, Msg, init, resize, subscriptions, update, view)
 
 import Grids exposing (Grid)
 import Html exposing (Html)
@@ -10,7 +10,17 @@ import Svg.Attributes as Attr exposing (..)
 import Transforms exposing (Transform)
 
 
-init : { size : Size, lines : List Line, margins : Int, id : String } -> ( Grid, Cmd Msg )
+type alias Map =
+    Grid { mapBox : MapBox, id : String }
+
+
+init :
+    { size : Size
+    , lines : List Line
+    , margins : Int
+    , id : String
+    }
+    -> ( Map, Cmd Msg )
 init { size, lines, margins, id } =
     let
         valuesRange =
@@ -25,6 +35,7 @@ init { size, lines, margins, id } =
       , transform = Transforms.calcTransform size valuesRange
       , lines = lines
       , mapBox = mapBox
+      , id = id
       }
     , Cmd.map MapBoxMsg cmd
     )
@@ -38,31 +49,18 @@ type Msg
 -- UPDATE
 
 
-update : Msg -> Grid -> Grid
-update msg grid =
+update : Msg -> Map -> Map
+update msg map =
     case msg of
         MapBoxMsg subMsg ->
-            case grid.mapBox of
-                Just mapBox ->
-                    { grid
-                        | mapBox =
-                            Just (MapBoxes.update subMsg mapBox)
-                    }
-
-                Nothing ->
-                    grid
+            { map | mapBox = MapBoxes.update subMsg map.mapBox }
 
 
-resize : Size -> Grid -> Grid
+resize : Size -> Map -> Map
 resize size map =
-    case map.mapBox of
-        Just mapBox ->
-            map
-                |> Grids.resize size
-                |> (\m -> { m | mapBox = Just (MapBoxes.resize size mapBox) })
-
-        Nothing ->
-            map
+    map
+        |> Grids.resize size
+        |> (\m -> { m | mapBox = MapBoxes.resize size map.mapBox })
 
 
 
@@ -78,12 +76,13 @@ subscriptions =
 -- VIEW
 
 
-view : Grid -> Html Msg
+view : Map -> Html Msg
 view grid =
     svg
-        [ width <| String.fromInt <| Tuple.first grid.size
+        [ width <| String.fromInt <| Tuple.first grid.size - 10
         , height <| String.fromInt <| Tuple.second grid.size
         , viewBoxAttr grid.size grid.margins
+        , class "svgMap"
 
         --, viewBox <| Transforms.viewbox grid.valuesRange grid.size
         ]
@@ -92,14 +91,9 @@ view grid =
         ]
 
 
-viewMapBox : Grid -> Svg Msg
-viewMapBox grid =
-    case grid.mapBox of
-        Just mapBox ->
-            Svg.map MapBoxMsg (MapBoxes.view mapBox)
-
-        Nothing ->
-            g [] []
+viewMapBox : Map -> Svg Msg
+viewMapBox map =
+    Svg.map MapBoxMsg (MapBoxes.view map.mapBox)
 
 
 viewBoxAttr : Size -> Int -> Attribute msg
