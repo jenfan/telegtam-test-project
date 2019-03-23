@@ -20,25 +20,23 @@ init :
     , margins : Int
     , id : String
     }
-    -> ( Map, Cmd Msg )
+    -> Map
 init { size, lines, margins, id } =
     let
         valuesRange =
             Lines.valuesRange lines
 
-        ( mapBox, cmd ) =
+        mapBox =
             MapBoxes.init size id
     in
-    ( { size = size
-      , margins = margins
-      , valuesRange = valuesRange
-      , transform = Transforms.calcTransform size valuesRange
-      , lines = lines
-      , mapBox = mapBox
-      , id = id
-      }
-    , Cmd.map MapBoxMsg cmd
-    )
+    { size = size
+    , margins = margins
+    , valuesRange = valuesRange
+    , transform = Transforms.calcTransform size valuesRange
+    , lines = lines
+    , mapBox = mapBox
+    , id = id
+    }
 
 
 type Msg
@@ -79,15 +77,20 @@ subscriptions =
 view : Map -> Html Msg
 view grid =
     svg
-        [ width <| String.fromInt <| Tuple.first grid.size - 10
+        [ width <| String.fromInt <| Tuple.first grid.size - grid.margins * 2
         , height <| String.fromInt <| Tuple.second grid.size
         , viewBoxAttr grid.size grid.margins
-        , class "svgMap"
+        , id "svgMap"
+        , Attr.style "margin: 0 20px"
 
         --, viewBox <| Transforms.viewbox grid.valuesRange grid.size
         ]
-        [ viewMapBox grid
+        [ g [] []
+        , viewMapBox grid
         , Grids.viewLines grid
+        , viewBackground grid
+
+        --, background grid.size
         ]
 
 
@@ -96,12 +99,32 @@ viewMapBox map =
     Svg.map MapBoxMsg (MapBoxes.view map.mapBox)
 
 
+viewBackground : Map -> Svg Msg
+viewBackground map =
+    Svg.map MapBoxMsg (MapBoxes.viewBackground map.mapBox)
+
+
+
+--background : Size -> Svg Msg
+--background ( w, h ) =
+--    rect
+--        [ width <| String.fromInt <| w
+--        , height <| String.fromInt h
+--        , x "0"
+--        , y <| String.fromInt <| -1 * h
+--        --, Attr.cursor cursor
+--        , fillOpacity "0.75"
+--        , fill "#eee"
+--        ]
+--        []
+
+
 viewBoxAttr : Size -> Int -> Attribute msg
 viewBoxAttr ( w, h ) margin =
-    [ 0 - margin * 5
-    , (h + margin) * -1
-    , w + margin * 10
-    , h + margin * 10
+    [ 0
+    , h * -1
+    , w + 10
+    , h
     ]
         |> List.map String.fromInt
         |> String.join " "

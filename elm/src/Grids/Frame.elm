@@ -8,7 +8,7 @@ import MapBoxes exposing (MapBox)
 import Ranges exposing (Range, Size, XY, XYRanges)
 import Svg exposing (..)
 import Svg.Attributes as Attr exposing (..)
-import Transforms exposing (Transform)
+import Transforms exposing (Transform, Translate)
 
 
 type alias Frame =
@@ -26,45 +26,29 @@ init { size, lines, margins, position } =
     let
         valuesRange =
             Lines.valuesRange lines
-
-        newSize =
-            calcSizeOfPosition position size
     in
     { size = size
     , margins = margins
     , valuesRange = valuesRange
-    , transform = Transforms.calcTransform newSize valuesRange
+    , transform = Transforms.calcTransform size valuesRange
     , lines = lines
     , position = position
     }
 
 
-calcSizeOfPosition : Range -> Size -> Size
-calcSizeOfPosition ( x1, x2 ) size =
-    size
-        |> Tuple.mapFirst (\x -> toFloat x / (x2 - x1) |> round)
-        |> Debug.log "size: "
-
-
 updatePosition : Range -> Frame -> Frame
 updatePosition position ({ size } as frame) =
-    let
-        newSize =
-            calcSizeOfPosition position size
-    in
-    { frame
-        | transform = Transforms.calcTransform newSize frame.valuesRange
-        , position = position
-    }
+    { frame | position = position }
 
 
 view : Frame -> Html msg
 view frame =
     svg
-        [ width <| String.fromInt <| Tuple.first frame.size
+        [ width <| String.fromInt <| Tuple.first frame.size - frame.margins
         , height <| String.fromInt <| Tuple.second frame.size
         , viewBoxAttr frame.size frame.margins
         , preserveAspectRatio "none"
+        , class "frame"
 
         --, viewBox <| Transforms.viewbox frame.valuesRange frame.size
         ]
@@ -75,16 +59,13 @@ view frame =
 
 viewLines : Frame -> Svg msg
 viewLines frame =
-    g [ translatePositionAttr frame ]
-        [ Grids.viewLines frame ]
+    Grids.viewLines frame
+        |> Transforms.transformToPositionGroup frame.position frame.size
 
 
-translatePositionAttr : Frame -> Attribute msg
-translatePositionAttr frame =
-    frame.position
-        |> Tuple.mapFirst (\x -> x * -1 * (frame.size |> Tuple.first |> toFloat))
-        |> Tuple.mapSecond (\y -> y * 0)
-        |> Transforms.translateAttr
+calcBoxPosTranslate : Range -> Size -> Translate
+calcBoxPosTranslate ( x1, x2 ) ( width, _ ) =
+    ( toFloat width * x1 / (x1 - x2), 0 )
 
 
 viewDial : Frame -> Svg msg
@@ -106,7 +87,7 @@ viewBoxAttr ( w, h ) margin =
     [ 0 - margin
     , (h + margin) * -1
     , w + margin
-    , h + margin * 10
+    , h + margin * 7
     ]
         |> List.map String.fromInt
         |> String.join " "

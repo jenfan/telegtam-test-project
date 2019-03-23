@@ -6,7 +6,7 @@ import MapBoxes exposing (MapBox)
 import Ranges exposing (Range, Size, XY, XYRanges)
 import Svg exposing (..)
 import Svg.Attributes as Attr exposing (..)
-import Transforms exposing (Transform)
+import Transforms exposing (Transform, Transition(..))
 
 
 type alias Grid a =
@@ -60,4 +60,4 @@ viewLines grid =
     grid.lines
         |> List.map (Lines.draw grid.transform grid.size)
         |> g []
-        |> Transforms.transformGroup grid.transform
+        |> Transforms.transformGroup grid.transform Slow

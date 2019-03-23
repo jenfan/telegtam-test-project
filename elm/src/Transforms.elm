@@ -1,6 +1,6 @@
-module Transforms exposing (Scale, Transform, Translate, calcTransform, scaleAttr, transformGroup, translateAttr)
+module Transforms exposing (Scale, Transform, Transition(..), Translate, calcTransform, scaleAttr, transformGroup, transformToPositionGroup, translateAttr)
 
-import Ranges exposing (Size, XY, XYRanges)
+import Ranges exposing (Range, Size, XY, XYRanges)
 import Svg exposing (Attribute, Svg, g)
 import Svg.Attributes exposing (class, transform)
 import Tuples exposing (joinWithComma)
@@ -18,6 +18,21 @@ type alias Transform =
     { scale : Scale
     , translate : Translate
     }
+
+
+type Transition
+    = Slow
+    | Fast
+
+
+transitionString : Transition -> String
+transitionString transition =
+    case transition of
+        Fast ->
+            "transition-fast"
+
+        Slow ->
+            "transition-slow"
 
 
 calcTransform : Size -> Maybe XYRanges -> Transform
@@ -74,6 +89,21 @@ calcTranslate ( w, h ) ( xScale, yScale ) ( ( minX, maxX ), ( minY, maxY ) ) =
     )
 
 
+transformToPositionGroup : Range -> Size -> Svg msg -> Svg msg
+transformToPositionGroup ( x1, x2 ) ( w, _ ) svg_ =
+    let
+        scaleX =
+            1 / (x2 - x1)
+
+        translateX =
+            toFloat w * scaleX * x1 * -1
+
+        transform =
+            Transform ( scaleX, 1.0 ) ( translateX, 0.0 )
+    in
+    transformGroup transform Fast svg_
+
+
 scaleAttr : Transform -> Attribute msg
 scaleAttr { scale } =
     scale
@@ -90,26 +120,26 @@ translateAttr translate =
         |> transform
 
 
-transformGroup : Transform -> Svg msg -> Svg msg
-transformGroup transform_ svg_ =
+transformGroup : Transform -> Transition -> Svg msg -> Svg msg
+transformGroup transform_ transition svg_ =
     svg_
-        |> scaleGroup transform_
-        |> translateGroup transform_
+        |> scaleGroup transform_ transition
+        |> translateGroup transform_ transition
 
 
-translateGroup : Transform -> Svg msg -> Svg msg
-translateGroup transform_ svg_ =
+translateGroup : Transform -> Transition -> Svg msg -> Svg msg
+translateGroup transform_ transition svg_ =
     g
         [ translateAttr transform_.translate
-        , class "transition"
+        , class <| transitionString transition
         ]
         [ svg_ ]
 
 
-scaleGroup : Transform -> Svg msg -> Svg msg
-scaleGroup transform_ svg_ =
+scaleGroup : Transform -> Transition -> Svg msg -> Svg msg
+scaleGroup transform_ transition svg_ =
     g
         [ scaleAttr transform_
-        , class "transition"
+        , class <| transitionString transition
         ]
         [ svg_ ]

@@ -19,11 +19,7 @@ type Msg
 
 init : Size -> ( Chart, Cmd Msg )
 init size =
-    let
-        ( chart, cmd ) =
-            Charts.init size
-    in
-    ( chart, Cmd.map ChartMsg cmd )
+    ( Charts.init size, Cmd.none )
 
 
 view : Chart -> List (Html Msg)

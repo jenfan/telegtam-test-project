@@ -6,21 +6,28 @@
   <script type="text/javascript" src="./make_draggable.js"></script>
   <style type="text/css">
     .line {
-      -webkit-transition: opacity .2s ease-in-out;
-      -moz-transition: opacity .2s ease-in-out;
-      -ms-transition: opacity .2s ease-in-out;
-      -o-transition: opacity .2s ease-in-out;
-      transition: opacity .2s ease-in-out;
+      -webkit-transition: opacity .3s ease-in-out;
+      -moz-transition: opacity .3s ease-in-out;
+      -ms-transition: opacity .3s ease-in-out;
+      -o-transition: opacity .3s ease-in-out;
+      transition: opacity .3s ease-in-out;
     }
     .hidden { opacity: 0; }
-    .transition {
+    .transition-slow {
       transition: all .3s ease;
+    }
+    .transition-fast {
+      /*transition: all 100ms ease;*/
     }
     .line { vector-effect: non-scaling-stroke; }
     .dial > g > text {
-      font-size: 25pt;
+      font-size: 20pt;
       font-weight: 100;
-      font-family: "Source Code Pro", Courier, monospace
+      stroke: #b8babd;
+      font-family: 'Gothic A1', sans-serif;
+    }
+    .frame .line {
+      stroke-width: 5;
     }
     .button {
       border: none;
@@ -35,9 +42,6 @@
     body {
       padding: 0;
       margin: 0;
-    }
-    .svgMap {
-      margin: 0 5px;
     }
   </style>
 </head>

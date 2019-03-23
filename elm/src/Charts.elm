@@ -24,7 +24,7 @@ type Msg
     | MapMsg Map.Msg
 
 
-init : Size -> ( Chart, Cmd Msg )
+init : Size -> Chart
 init size =
     let
         id =
@@ -33,11 +33,11 @@ init size =
         lines =
             Data.init
 
-        ( map, cmd ) =
+        map =
             Map.init
                 { size = mapSize size
                 , lines = lines
-                , margins = 0
+                , margins = 20
                 , id = id
                 }
 
@@ -45,27 +45,25 @@ init size =
             Frame.init
                 { size = frameSize size
                 , lines = lines
-                , margins = 10
+                , margins = 20
                 , position = map.mapBox.position
                 }
     in
-    ( { size = size
-      , frame = frame
-      , map = map
-      }
-    , Cmd.map MapMsg cmd
-    )
+    { size = size
+    , frame = frame
+    , map = map
+    }
 
 
 frameSize : Size -> Size
 frameSize size =
     size
-        |> Tuple.mapSecond (\y -> toFloat y * 0.4 |> round)
+        |> Tuple.mapSecond (\y -> toFloat y * 0.5 |> round)
 
 
 mapSize : Size -> Size
 mapSize size =
-    Tuple.mapSecond (\y -> toFloat y * 0.04 |> round) size
+    Tuple.mapSecond (\y -> toFloat y * 0.055 |> round) size
 
 
 update : Msg -> Chart -> Chart
