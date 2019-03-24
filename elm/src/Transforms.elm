@@ -1,4 +1,4 @@
-module Transforms exposing (Scale, Transform, Transition(..), Translate, calcTransform, scaleAttr, transformGroup, transformToPositionGroup, translateAttr)
+module Transforms exposing (Scale, Transform, Transition(..), Translate, calcTransform, scaleAttr, transformGroup, transformToPositionGroup, translateAttr, translateGroup)
 
 import Ranges exposing (Range, Size, XY, XYRanges)
 import Svg exposing (Attribute, Svg, g)
@@ -89,19 +89,16 @@ calcTranslate ( w, h ) ( xScale, yScale ) ( ( minX, maxX ), ( minY, maxY ) ) =
     )
 
 
-transformToPositionGroup : Range -> Size -> Svg msg -> Svg msg
-transformToPositionGroup ( x1, x2 ) ( w, _ ) svg_ =
+transformToPositionGroup : Range -> Size -> Transform
+transformToPositionGroup ( x1, x2 ) ( w, _ ) =
     let
         scaleX =
             1 / (x2 - x1)
 
         translateX =
             toFloat w * scaleX * x1 * -1
-
-        transform =
-            Transform ( scaleX, 1.0 ) ( translateX, 0.0 )
     in
-    transformGroup transform Fast svg_
+    Transform ( scaleX, 1.0 ) ( translateX, 0.0 )
 
 
 scaleAttr : Transform -> Attribute msg

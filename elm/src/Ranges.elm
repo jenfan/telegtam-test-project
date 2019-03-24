@@ -30,12 +30,12 @@ init floats =
 
 
 initListFloats : Int -> Int -> List Float
-initListFloats numOfDials width_ =
+initListFloats count width_ =
     let
         step =
-            toFloat width_ / toFloat numOfDials
+            toFloat width_ / toFloat count
     in
-    List.range 0 (numOfDials - 1)
+    List.range 0 count
         |> List.map toFloat
         |> List.map (\a -> a * step)
 

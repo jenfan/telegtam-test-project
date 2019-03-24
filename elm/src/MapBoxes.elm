@@ -65,7 +65,6 @@ calcBoxWidth w =
 calcPosition : Float -> Float -> Float -> Range
 calcPosition width leftX rightX =
     ( leftX / width, rightX / width )
-        |> Debug.log "position"
 
 
 

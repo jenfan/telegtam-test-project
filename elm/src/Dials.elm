@@ -1,7 +1,7 @@
-module Dials exposing (Dial, init, view)
+module Dials exposing (Dial, init, update, viewX, viewY)
 
 import Points exposing (Point)
-import Ranges exposing (Size, XY, XYRanges)
+import Ranges exposing (Range, Size, XY, XYRanges)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import Transforms exposing (Scale, Transform)
@@ -10,33 +10,72 @@ import Transforms exposing (Scale, Transform)
 type alias Dial =
     { xNotchCount : Int
     , yNotchCount : Int
-    , stepX : Float
-    , stepY : Float
+    , scaledFrameWidth : Int
     }
 
 
-init : Size -> Dial
-init ( width, height ) =
-    Dial 5 6 (toFloat width / 5.0) (toFloat height / 6.0)
+init : Size -> Range -> Dial
+init ( width, height ) ( x1, x2 ) =
+    let
+        scaledFrameWidth =
+            toFloat width / (x2 - x1) |> round
+
+        xNotchCount =
+            round (1 / (x2 - x1))
+                * 5
+                --|> round
+                |> Debug.log "count"
+    in
+    Dial xNotchCount 6 scaledFrameWidth
 
 
-view : Size -> XYRanges -> Transform -> Scale -> Dial -> Svg msg
-view ( width, height ) ( xRange, yRange ) transform prescale dial =
+update : Size -> Range -> Dial -> Dial
+update ( width, _ ) ( x1, x2 ) dial =
+    if toFloat width / (x2 - x1) - toFloat dial.scaledFrameWidth < 0.001 then
+        dial
+
+    else
+        recalc width ( x1, x2 ) dial
+
+
+recalc : Int -> Range -> Dial -> Dial
+recalc width ( x1, x2 ) dial =
+    let
+        scaledFrameWidth =
+            toFloat width / (x2 - x1) |> round
+
+        xNotchCount =
+            round (1 / (x2 - x1))
+                * 5
+    in
+    { dial | xNotchCount = xNotchCount, scaledFrameWidth = scaledFrameWidth }
+        |> Debug.log "recalced"
+
+
+viewX : Size -> Range -> Transform -> Scale -> Dial -> Svg msg
+viewX ( width, height ) ( x1, x2 ) transform prescale dial =
+    let
+        hDivs =
+            Ranges.initListFloats dial.xNotchCount dial.scaledFrameWidth
+                |> List.map Points.initWithY0
+                |> List.map (h (Points.actualRoundX prescale transform))
+    in
+    g [ class "dial" ]
+        [ g [ class "x" ] hDivs
+        ]
+
+
+viewY : Size -> Transform -> Scale -> Dial -> Svg msg
+viewY ( width, height ) transform prescale dial =
     let
         vDivs =
             Ranges.initListFloats dial.yNotchCount height
                 |> List.map Points.initWithX0
                 |> List.map (v width (Points.actualRoundY prescale transform))
                 |> List.concat
-
-        hDivs =
-            Ranges.initListFloats dial.xNotchCount width
-                |> List.map Points.initWithY0
-                |> List.map (h (Points.actualRoundX prescale transform))
     in
     g [ class "dial" ]
         [ g [ class "v" ] vDivs
-        , g [ class "h" ] hDivs
         ]
 
 
@@ -80,7 +119,7 @@ textY title point =
         [ x <| Points.renderX point
         , y <| Points.renderY point
         , alignmentBaseline "text-after-edge"
-        , transform <| "translate(-10,0)"
+        , transform <| "translate(0,-20)"
         ]
         [ text title ]
 
@@ -90,6 +129,15 @@ textX title point =
     text_
         [ x <| Points.renderX point
         , y <| Points.renderY point
-        , transform <| "translate(3,70)"
+        , transform <| "translate(0,70)"
         ]
         [ text title ]
+
+
+
+--viewHorizontal : Size -> Size -> Dial
+--viewHorizontal (w,_) (wBox, _) { xNotchCount }
+--    let
+--        numOfSteps = w / wBox / xNotchCount
+--    in
+--

@@ -5137,6 +5137,26 @@ var author$project$Data$init = function () {
 	return _List_fromArray(
 		[line1, line2]);
 }();
+var author$project$Dials$Dial = F3(
+	function (xNotchCount, yNotchCount, scaledFrameWidth) {
+		return {scaledFrameWidth: scaledFrameWidth, xNotchCount: xNotchCount, yNotchCount: yNotchCount};
+	});
+var elm$core$Basics$fdiv = _Basics_fdiv;
+var elm$core$Basics$sub = _Basics_sub;
+var elm$core$Debug$log = _Debug_log;
+var author$project$Dials$init = F2(
+	function (_n0, _n1) {
+		var width = _n0.a;
+		var height = _n0.b;
+		var x1 = _n1.a;
+		var x2 = _n1.b;
+		var xNotchCount = A2(
+			elm$core$Debug$log,
+			'count',
+			elm$core$Basics$round(1 / (x2 - x1)) * 5);
+		var scaledFrameWidth = elm$core$Basics$round(width / (x2 - x1));
+		return A3(author$project$Dials$Dial, xNotchCount, 6, scaledFrameWidth);
+	});
 var author$project$Points$scale = F2(
 	function (_n0, _n1) {
 		var scaleX = _n0.a;
@@ -5295,7 +5315,6 @@ var author$project$Lines$valuesRange = function (lines) {
 				},
 				lines)));
 };
-var elm$core$Basics$fdiv = _Basics_fdiv;
 var author$project$Grids$pretransformLines = function (lines) {
 	var scale = function () {
 		var _n0 = author$project$Lines$valuesRange(lines);
@@ -5322,7 +5341,6 @@ var author$project$Grids$pretransformLines = function (lines) {
 		lines);
 	return _Utils_Tuple2(newLines, scale);
 };
-var elm$core$Basics$sub = _Basics_sub;
 var author$project$Ranges$width = function (_n0) {
 	var a = _n0.a;
 	var b = _n0.b;
@@ -5397,6 +5415,7 @@ var author$project$Grids$Frame$init = function (_n0) {
 	var pretransformScale = _n1.b;
 	var valuesRange = author$project$Lines$valuesRange(scaledLines);
 	return {
+		dial: A2(author$project$Dials$init, size, position),
 		lines: scaledLines,
 		margins: margins,
 		position: position,
@@ -5409,13 +5428,9 @@ var author$project$Grids$Frame$init = function (_n0) {
 var author$project$MapBoxes$calcBoxWidth = function (w) {
 	return w / 4.5;
 };
-var elm$core$Debug$log = _Debug_log;
 var author$project$MapBoxes$calcPosition = F3(
 	function (width, leftX, rightX) {
-		return A2(
-			elm$core$Debug$log,
-			'position',
-			_Utils_Tuple2(leftX / width, rightX / width));
+		return _Utils_Tuple2(leftX / width, rightX / width);
 	});
 var elm$core$Basics$apL = F2(
 	function (f, x) {
@@ -5979,12 +5994,39 @@ var author$project$Grids$toggleLine = F2(
 				valuesRange: valuesRange
 			});
 	});
+var author$project$Dials$recalc = F3(
+	function (width, _n0, dial) {
+		var x1 = _n0.a;
+		var x2 = _n0.b;
+		var xNotchCount = elm$core$Basics$round(1 / (x2 - x1)) * 5;
+		var scaledFrameWidth = elm$core$Basics$round(width / (x2 - x1));
+		return A2(
+			elm$core$Debug$log,
+			'recalced',
+			_Utils_update(
+				dial,
+				{scaledFrameWidth: scaledFrameWidth, xNotchCount: xNotchCount}));
+	});
+var author$project$Dials$update = F3(
+	function (_n0, _n1, dial) {
+		var width = _n0.a;
+		var x1 = _n1.a;
+		var x2 = _n1.b;
+		return (((width / (x2 - x1)) - dial.scaledFrameWidth) < 1.0e-3) ? dial : A3(
+			author$project$Dials$recalc,
+			width,
+			_Utils_Tuple2(x1, x2),
+			dial);
+	});
 var author$project$Grids$Frame$updatePosition = F2(
 	function (position, frame) {
 		var size = frame.size;
 		return _Utils_update(
 			frame,
-			{position: position});
+			{
+				dial: A3(author$project$Dials$update, frame.size, frame.position, frame.dial),
+				position: position
+			});
 	});
 var author$project$MapBoxes$updatePosition = function (mapBox) {
 	var x1 = mapBox.x1;
@@ -6232,55 +6274,15 @@ var author$project$Grids$Frame$viewBoxAttr = F2(
 					_List_fromArray(
 						[0 - margin, (h + margin) * (-1), w + margin, h + (margin * 7)]))));
 	});
-var author$project$Dials$Dial = F4(
-	function (xNotchCount, yNotchCount, stepX, stepY) {
-		return {stepX: stepX, stepY: stepY, xNotchCount: xNotchCount, yNotchCount: yNotchCount};
-	});
-var author$project$Dials$init = function (_n0) {
-	var width = _n0.a;
-	var height = _n0.b;
-	return A4(author$project$Dials$Dial, 5, 6, width / 5.0, height / 6.0);
-};
 var elm$core$String$fromFloat = _String_fromNumber;
-var author$project$Points$renderX = function (_n0) {
-	var _n1 = _n0.a;
-	var x = _n1.a;
-	return elm$core$String$fromFloat(x);
-};
 var author$project$Points$renderY = function (_n0) {
 	var _n1 = _n0.a;
 	var y = _n1.b;
 	return elm$core$String$fromFloat(-y);
 };
-var elm$svg$Svg$text = elm$virtual_dom$VirtualDom$text;
-var elm$svg$Svg$text_ = elm$svg$Svg$trustedNode('text');
-var elm$svg$Svg$Attributes$transform = _VirtualDom_attribute('transform');
-var elm$svg$Svg$Attributes$x = _VirtualDom_attribute('x');
-var elm$svg$Svg$Attributes$y = _VirtualDom_attribute('y');
-var author$project$Dials$textX = F2(
-	function (title, point) {
-		return A2(
-			elm$svg$Svg$text_,
-			_List_fromArray(
-				[
-					elm$svg$Svg$Attributes$x(
-					author$project$Points$renderX(point)),
-					elm$svg$Svg$Attributes$y(
-					author$project$Points$renderY(point)),
-					elm$svg$Svg$Attributes$transform('translate(3,70)')
-				]),
-			_List_fromArray(
-				[
-					elm$svg$Svg$text(title)
-				]));
-	});
-var author$project$Dials$h = F2(
-	function (actualX, point) {
-		var title = actualX(point);
-		return A2(author$project$Dials$textX, title, point);
-	});
 var elm$svg$Svg$line = elm$svg$Svg$trustedNode('line');
 var elm$svg$Svg$Attributes$strokeWidth = _VirtualDom_attribute('stroke-width');
+var elm$svg$Svg$Attributes$transform = _VirtualDom_attribute('transform');
 var elm$svg$Svg$Attributes$x1 = _VirtualDom_attribute('x1');
 var elm$svg$Svg$Attributes$x2 = _VirtualDom_attribute('x2');
 var elm$svg$Svg$Attributes$y1 = _VirtualDom_attribute('y1');
@@ -6304,7 +6306,16 @@ var author$project$Dials$hLine = F2(
 				]),
 			_List_Nil);
 	});
+var author$project$Points$renderX = function (_n0) {
+	var _n1 = _n0.a;
+	var x = _n1.a;
+	return elm$core$String$fromFloat(x);
+};
+var elm$svg$Svg$text = elm$virtual_dom$VirtualDom$text;
+var elm$svg$Svg$text_ = elm$svg$Svg$trustedNode('text');
 var elm$svg$Svg$Attributes$alignmentBaseline = _VirtualDom_attribute('alignment-baseline');
+var elm$svg$Svg$Attributes$x = _VirtualDom_attribute('x');
+var elm$svg$Svg$Attributes$y = _VirtualDom_attribute('y');
 var author$project$Dials$textY = F2(
 	function (title, point) {
 		return A2(
@@ -6316,7 +6327,7 @@ var author$project$Dials$textY = F2(
 					elm$svg$Svg$Attributes$y(
 					author$project$Points$renderY(point)),
 					elm$svg$Svg$Attributes$alignmentBaseline('text-after-edge'),
-					elm$svg$Svg$Attributes$transform('translate(-10,0)')
+					elm$svg$Svg$Attributes$transform('translate(0,-20)')
 				]),
 			_List_fromArray(
 				[
@@ -6331,6 +6342,121 @@ var author$project$Dials$v = F3(
 				A2(author$project$Dials$hLine, width, point),
 				A2(author$project$Dials$textY, title, point)
 			]);
+	});
+var author$project$Points$unscale = F2(
+	function (_n0, _n1) {
+		var scaleX = _n0.a;
+		var scaleY = _n0.b;
+		var _n2 = _n1.a;
+		var x = _n2.a;
+		var y = _n2.b;
+		return author$project$Points$Point(
+			_Utils_Tuple2(x / scaleX, y / scaleY));
+	});
+var author$project$Points$untranslate = F2(
+	function (_n0, _n1) {
+		var trX = _n0.a;
+		var trY = _n0.b;
+		var _n2 = _n1.a;
+		var x = _n2.a;
+		var y = _n2.b;
+		return author$project$Points$Point(
+			_Utils_Tuple2(x - trX, (0 - y) - trY));
+	});
+var author$project$Points$actual = F3(
+	function (prescale, transform_, point) {
+		return A2(
+			author$project$Points$unscale,
+			prescale,
+			A2(
+				author$project$Points$unscale,
+				transform_.scale,
+				A2(author$project$Points$untranslate, transform_.translate, point)));
+	});
+var author$project$Points$renderRoundY = function (_n0) {
+	var _n1 = _n0.a;
+	var y = _n1.b;
+	return elm$core$String$fromInt(
+		elm$core$Basics$round(-y));
+};
+var author$project$Points$actualRoundY = F3(
+	function (prescale, transform_, point) {
+		return author$project$Points$renderRoundY(
+			A3(author$project$Points$actual, prescale, transform_, point));
+	});
+var author$project$Points$initWithX0 = function (y) {
+	return A2(author$project$Points$init, 0, y);
+};
+var author$project$Ranges$initListFloats = F2(
+	function (count, width_) {
+		var step = width_ / count;
+		return A2(
+			elm$core$List$map,
+			function (a) {
+				return a * step;
+			},
+			A2(
+				elm$core$List$map,
+				elm$core$Basics$toFloat,
+				A2(elm$core$List$range, 0, count)));
+	});
+var elm$svg$Svg$g = elm$svg$Svg$trustedNode('g');
+var author$project$Dials$viewY = F4(
+	function (_n0, transform, prescale, dial) {
+		var width = _n0.a;
+		var height = _n0.b;
+		var vDivs = elm$core$List$concat(
+			A2(
+				elm$core$List$map,
+				A2(
+					author$project$Dials$v,
+					width,
+					A2(author$project$Points$actualRoundY, prescale, transform)),
+				A2(
+					elm$core$List$map,
+					author$project$Points$initWithX0,
+					A2(author$project$Ranges$initListFloats, dial.yNotchCount, height))));
+		return A2(
+			elm$svg$Svg$g,
+			_List_fromArray(
+				[
+					elm$svg$Svg$Attributes$class('dial')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					elm$svg$Svg$g,
+					_List_fromArray(
+						[
+							elm$svg$Svg$Attributes$class('v')
+						]),
+					vDivs)
+				]));
+	});
+var author$project$Grids$Frame$viewDial = function (frame) {
+	return A4(author$project$Dials$viewY, frame.size, frame.transform, frame.pretransformScale, frame.dial);
+};
+var author$project$Dials$textX = F2(
+	function (title, point) {
+		return A2(
+			elm$svg$Svg$text_,
+			_List_fromArray(
+				[
+					elm$svg$Svg$Attributes$x(
+					author$project$Points$renderX(point)),
+					elm$svg$Svg$Attributes$y(
+					author$project$Points$renderY(point)),
+					elm$svg$Svg$Attributes$transform('translate(0,70)')
+				]),
+			_List_fromArray(
+				[
+					elm$svg$Svg$text(title)
+				]));
+	});
+var author$project$Dials$h = F2(
+	function (actualX, point) {
+		var title = actualX(point);
+		return A2(author$project$Dials$textX, title, point);
 	});
 var elm$core$Basics$ge = _Utils_ge;
 var elm$core$Basics$modBy = _Basics_modBy;
@@ -6417,36 +6543,6 @@ var author$project$Date$fromPosix = function (millisecond) {
 		elm$time$Time$millisToPosix(millisecond));
 	return author$project$Date$monthString(date.month) + (' ' + elm$core$String$fromInt(date.day));
 };
-var author$project$Points$unscale = F2(
-	function (_n0, _n1) {
-		var scaleX = _n0.a;
-		var scaleY = _n0.b;
-		var _n2 = _n1.a;
-		var x = _n2.a;
-		var y = _n2.b;
-		return author$project$Points$Point(
-			_Utils_Tuple2(x / scaleX, y / scaleY));
-	});
-var author$project$Points$untranslate = F2(
-	function (_n0, _n1) {
-		var trX = _n0.a;
-		var trY = _n0.b;
-		var _n2 = _n1.a;
-		var x = _n2.a;
-		var y = _n2.b;
-		return author$project$Points$Point(
-			_Utils_Tuple2(x - trX, (0 - y) - trY));
-	});
-var author$project$Points$actual = F3(
-	function (prescale, transform_, point) {
-		return A2(
-			author$project$Points$unscale,
-			prescale,
-			A2(
-				author$project$Points$unscale,
-				transform_.scale,
-				A2(author$project$Points$untranslate, transform_.translate, point)));
-	});
 var author$project$Points$renderRoundX = function (_n0) {
 	var _n1 = _n0.a;
 	var x = _n1.a;
@@ -6458,54 +6554,15 @@ var author$project$Points$actualRoundX = F3(
 			author$project$Points$renderRoundX(
 				A3(author$project$Points$actual, prescale, transform_, point)));
 	});
-var author$project$Points$renderRoundY = function (_n0) {
-	var _n1 = _n0.a;
-	var y = _n1.b;
-	return elm$core$String$fromInt(
-		elm$core$Basics$round(-y));
-};
-var author$project$Points$actualRoundY = F3(
-	function (prescale, transform_, point) {
-		return author$project$Points$renderRoundY(
-			A3(author$project$Points$actual, prescale, transform_, point));
-	});
-var author$project$Points$initWithX0 = function (y) {
-	return A2(author$project$Points$init, 0, y);
-};
 var author$project$Points$initWithY0 = function (x) {
 	return A2(author$project$Points$init, x, 0);
 };
-var author$project$Ranges$initListFloats = F2(
-	function (numOfDials, width_) {
-		var step = width_ / numOfDials;
-		return A2(
-			elm$core$List$map,
-			function (a) {
-				return a * step;
-			},
-			A2(
-				elm$core$List$map,
-				elm$core$Basics$toFloat,
-				A2(elm$core$List$range, 0, numOfDials - 1)));
-	});
-var elm$svg$Svg$g = elm$svg$Svg$trustedNode('g');
-var author$project$Dials$view = F5(
+var author$project$Dials$viewX = F5(
 	function (_n0, _n1, transform, prescale, dial) {
 		var width = _n0.a;
 		var height = _n0.b;
-		var xRange = _n1.a;
-		var yRange = _n1.b;
-		var vDivs = elm$core$List$concat(
-			A2(
-				elm$core$List$map,
-				A2(
-					author$project$Dials$v,
-					width,
-					A2(author$project$Points$actualRoundY, prescale, transform)),
-				A2(
-					elm$core$List$map,
-					author$project$Points$initWithX0,
-					A2(author$project$Ranges$initListFloats, dial.yNotchCount, height))));
+		var x1 = _n1.a;
+		var x2 = _n1.b;
 		var hDivs = A2(
 			elm$core$List$map,
 			author$project$Dials$h(
@@ -6513,7 +6570,7 @@ var author$project$Dials$view = F5(
 			A2(
 				elm$core$List$map,
 				author$project$Points$initWithY0,
-				A2(author$project$Ranges$initListFloats, dial.xNotchCount, width)));
+				A2(author$project$Ranges$initListFloats, dial.xNotchCount, dial.scaledFrameWidth)));
 		return A2(
 			elm$svg$Svg$g,
 			_List_fromArray(
@@ -6526,28 +6583,11 @@ var author$project$Dials$view = F5(
 					elm$svg$Svg$g,
 					_List_fromArray(
 						[
-							elm$svg$Svg$Attributes$class('v')
-						]),
-					vDivs),
-					A2(
-					elm$svg$Svg$g,
-					_List_fromArray(
-						[
-							elm$svg$Svg$Attributes$class('h')
+							elm$svg$Svg$Attributes$class('x')
 						]),
 					hDivs)
 				]));
 	});
-var author$project$Grids$Frame$viewDial = function (frame) {
-	var _n0 = frame.valuesRange;
-	if (_n0.$ === 'Just') {
-		var range = _n0.a;
-		var dial = author$project$Dials$init(frame.size);
-		return A5(author$project$Dials$view, frame.size, range, frame.transform, frame.pretransformScale, dial);
-	} else {
-		return A2(elm$svg$Svg$g, _List_Nil, _List_Nil);
-	}
-};
 var author$project$Points$render = function (point) {
 	return author$project$Points$renderX(point) + (',' + author$project$Points$renderY(point));
 };
@@ -6669,45 +6709,91 @@ var author$project$Transforms$Transform = F2(
 	function (scale, translate) {
 		return {scale: scale, translate: translate};
 	});
-var author$project$Transforms$transformToPositionGroup = F3(
-	function (_n0, _n1, svg_) {
+var author$project$Transforms$transformToPositionGroup = F2(
+	function (_n0, _n1) {
 		var x1 = _n0.a;
 		var x2 = _n0.b;
 		var w = _n1.a;
 		var scaleX = 1 / (x2 - x1);
 		var translateX = ((w * scaleX) * x1) * (-1);
-		var transform = A2(
+		return A2(
 			author$project$Transforms$Transform,
 			_Utils_Tuple2(scaleX, 1.0),
 			_Utils_Tuple2(translateX, 0.0));
-		return A3(author$project$Transforms$transformGroup, transform, author$project$Transforms$Fast, svg_);
 	});
 var author$project$Grids$Frame$viewLines = function (frame) {
-	return A3(
-		author$project$Transforms$transformToPositionGroup,
-		frame.position,
-		frame.size,
+	var transform = A2(author$project$Transforms$transformToPositionGroup, frame.position, frame.size);
+	var transformedLines = A3(
+		author$project$Transforms$transformGroup,
+		transform,
+		author$project$Transforms$Fast,
 		author$project$Grids$viewLines(frame));
+	var translatedDial = A3(
+		author$project$Transforms$translateGroup,
+		transform,
+		author$project$Transforms$Fast,
+		A5(author$project$Dials$viewX, frame.size, frame.position, frame.transform, frame.pretransformScale, frame.dial));
+	return A2(
+		elm$svg$Svg$g,
+		_List_Nil,
+		_List_fromArray(
+			[transformedLines, translatedDial]));
 };
 var elm$svg$Svg$Attributes$preserveAspectRatio = _VirtualDom_attribute('preserveAspectRatio');
+var elm$svg$Svg$Attributes$textAnchor = _VirtualDom_attribute('text-anchor');
 var author$project$Grids$Frame$view = function (frame) {
-	return A2(
-		elm$svg$Svg$svg,
-		_List_fromArray(
-			[
-				elm$svg$Svg$Attributes$width(
-				elm$core$String$fromInt(frame.size.a - frame.margins)),
-				elm$svg$Svg$Attributes$height(
-				elm$core$String$fromInt(frame.size.b)),
-				A2(author$project$Grids$Frame$viewBoxAttr, frame.size, frame.margins),
-				elm$svg$Svg$Attributes$preserveAspectRatio('none'),
-				elm$svg$Svg$Attributes$class('frame')
-			]),
-		_List_fromArray(
-			[
-				author$project$Grids$Frame$viewDial(frame),
-				author$project$Grids$Frame$viewLines(frame)
-			]));
+	var size = frame.size;
+	var w = size.a - frame.margins;
+	var h = size.b;
+	var _n0 = frame.valuesRange;
+	if (_n0.$ === 'Just') {
+		var range = _n0.a;
+		return A2(
+			elm$svg$Svg$svg,
+			_List_fromArray(
+				[
+					elm$svg$Svg$Attributes$width(
+					elm$core$String$fromInt(w)),
+					elm$svg$Svg$Attributes$height(
+					elm$core$String$fromInt(h)),
+					A2(author$project$Grids$Frame$viewBoxAttr, frame.size, frame.margins),
+					elm$svg$Svg$Attributes$preserveAspectRatio('none'),
+					elm$svg$Svg$Attributes$class('frame')
+				]),
+			_List_fromArray(
+				[
+					author$project$Grids$Frame$viewDial(frame),
+					author$project$Grids$Frame$viewLines(frame)
+				]));
+	} else {
+		return A2(
+			elm$svg$Svg$svg,
+			_List_fromArray(
+				[
+					elm$svg$Svg$Attributes$width(
+					elm$core$String$fromInt(w)),
+					elm$svg$Svg$Attributes$height(
+					elm$core$String$fromInt(h))
+				]),
+			_List_fromArray(
+				[
+					A2(
+					elm$svg$Svg$text_,
+					_List_fromArray(
+						[
+							elm$svg$Svg$Attributes$x(
+							elm$core$String$fromInt((w / 2) | 0)),
+							elm$svg$Svg$Attributes$y(
+							elm$core$String$fromInt((h / 2) | 0)),
+							elm$svg$Svg$Attributes$style('font-size: 40pt'),
+							elm$svg$Svg$Attributes$textAnchor('middle')
+						]),
+					_List_fromArray(
+						[
+							elm$svg$Svg$text('NO DATA')
+						]))
+				]));
+	}
 };
 var elm$svg$Svg$rect = elm$svg$Svg$trustedNode('rect');
 var elm$svg$Svg$Attributes$fillOpacity = _VirtualDom_attribute('fill-opacity');

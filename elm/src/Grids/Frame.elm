@@ -1,18 +1,18 @@
 module Grids.Frame exposing (Frame, init, updatePosition, view)
 
-import Dials
+import Dials exposing (Dial)
 import Grids exposing (Grid)
-import Html exposing (Html)
+import Html exposing (Html, div)
 import Lines exposing (Line)
 import MapBoxes exposing (MapBox)
 import Ranges exposing (Range, Size, XY, XYRanges)
 import Svg exposing (..)
 import Svg.Attributes as Attr exposing (..)
-import Transforms exposing (Transform, Translate)
+import Transforms exposing (Transform, Transition(..), Translate)
 
 
 type alias Frame =
-    Grid { position : Range }
+    Grid { position : Range, dial : Dial }
 
 
 init :
@@ -38,34 +38,74 @@ init { size, position, lines, margins, id } =
     , pretransformScale = pretransformScale
     , lines = scaledLines
     , position = position
+    , dial = Dials.init size position
     }
 
 
 updatePosition : Range -> Frame -> Frame
 updatePosition position ({ size } as frame) =
-    { frame | position = position }
+    { frame
+        | position = position
+        , dial = Dials.update frame.size frame.position frame.dial
+    }
 
 
 view : Frame -> Html msg
-view frame =
-    svg
-        [ width <| String.fromInt <| Tuple.first frame.size - frame.margins
-        , height <| String.fromInt <| Tuple.second frame.size
-        , viewBoxAttr frame.size frame.margins
-        , preserveAspectRatio "none"
-        , class "frame"
+view ({ size } as frame) =
+    let
+        w =
+            Tuple.first size - frame.margins
 
-        --, viewBox <| Transforms.viewbox frame.valuesRange frame.size
-        ]
-        [ viewDial frame
-        , viewLines frame
-        ]
+        h =
+            Tuple.second size
+    in
+    case frame.valuesRange of
+        Just range ->
+            svg
+                [ width <| String.fromInt w
+                , height <| String.fromInt h
+                , viewBoxAttr frame.size frame.margins
+                , preserveAspectRatio "none"
+                , class "frame"
+
+                --, viewBox <| Transforms.viewbox frame.valuesRange frame.size
+                ]
+                [ viewDial frame
+                , viewLines frame
+                ]
+
+        Nothing ->
+            svg
+                [ width <| String.fromInt w
+                , height <| String.fromInt h
+                ]
+                [ text_
+                    [ x <| String.fromInt (w // 2)
+                    , y <| String.fromInt (h // 2)
+                    , Attr.style "font-size: 40pt"
+                    , textAnchor "middle"
+                    ]
+                    [ text "NO DATA" ]
+                ]
 
 
 viewLines : Frame -> Svg msg
 viewLines frame =
-    Grids.viewLines frame
-        |> Transforms.transformToPositionGroup frame.position frame.size
+    let
+        transform =
+            Transforms.transformToPositionGroup frame.position frame.size
+
+        transformedLines =
+            Transforms.transformGroup transform Fast (Grids.viewLines frame)
+
+        translatedDial =
+            Dials.viewX frame.size frame.position frame.transform frame.pretransformScale frame.dial
+                |> Transforms.translateGroup transform Fast
+    in
+    g []
+        [ transformedLines
+        , translatedDial
+        ]
 
 
 calcBoxPosTranslate : Range -> Size -> Translate
@@ -75,16 +115,7 @@ calcBoxPosTranslate ( x1, x2 ) ( width, _ ) =
 
 viewDial : Frame -> Svg msg
 viewDial frame =
-    case frame.valuesRange of
-        Just range ->
-            let
-                dial =
-                    Dials.init frame.size
-            in
-            Dials.view frame.size range frame.transform frame.pretransformScale dial
-
-        Nothing ->
-            g [] []
+    Dials.viewY frame.size frame.transform frame.pretransformScale frame.dial
 
 
 viewBoxAttr : Size -> Int -> Attribute msg
