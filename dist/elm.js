@@ -6087,6 +6087,9 @@ var author$project$Main$update = F2(
 var author$project$Charts$ToggleLine = function (a) {
 	return {$: 'ToggleLine', a: a};
 };
+var author$project$Lines$backgroundColor = function (line) {
+	return line.active ? line.color : 'transparent';
+};
 var elm$json$Json$Decode$map = _Json_map1;
 var elm$json$Json$Decode$map2 = _Json_map2;
 var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
@@ -6110,7 +6113,7 @@ var elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
 var elm$svg$Svg$Attributes$stroke = _VirtualDom_attribute('stroke');
 var elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
 var elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
-var author$project$Charts$galka = A2(
+var author$project$Lines$galka = A2(
 	elm$svg$Svg$svg,
 	_List_fromArray(
 		[
@@ -6124,7 +6127,7 @@ var author$project$Charts$galka = A2(
 			elm$svg$Svg$path,
 			_List_fromArray(
 				[
-					elm$svg$Svg$Attributes$fill('#fff'),
+					elm$svg$Svg$Attributes$fill('none'),
 					elm$svg$Svg$Attributes$stroke('none'),
 					elm$svg$Svg$Attributes$d('M154.22,5.45h0a18.31,18.31,0,0,0-25.82,0L52.23,81.62l-20.95-21a18.32,18.32,0,0,0-25.83,0h0a18.32,18.32,0,0,0,0,25.83l33,33c.26.3.54.6.83.89h0a18.31,18.31,0,0,0,25.82,0l89.11-89.11A18.31,18.31,0,0,0,154.22,5.45Z')
 				]),
@@ -6168,46 +6171,51 @@ var elm$html$Html$Events$onClick = function (msg) {
 		elm$json$Json$Decode$succeed(msg));
 };
 var elm$svg$Svg$Attributes$style = _VirtualDom_attribute('style');
+var author$project$Lines$viewBtn = F2(
+	function (msg, line) {
+		return A2(
+			elm$html$Html$button,
+			_List_fromArray(
+				[
+					elm$html$Html$Events$onClick(
+					msg(line.id)),
+					author$project$Utils$classList(
+					_List_fromArray(
+						[
+							_Utils_Tuple2('active', line.active)
+						]))
+				]),
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$svg$Svg$Attributes$style(
+							'background-color: ' + (author$project$Lines$backgroundColor(line) + ('; border: 8px solid ' + line.color))),
+							elm$svg$Svg$Attributes$class('circle')
+						]),
+					_List_fromArray(
+						[author$project$Lines$galka])),
+					A2(
+					elm$html$Html$span,
+					_List_Nil,
+					_List_fromArray(
+						[
+							elm$html$Html$text(line.title)
+						]))
+				]));
+	});
 var author$project$Charts$viewLineBtn = function (line) {
-	return A2(
-		elm$html$Html$button,
-		_List_fromArray(
-			[
-				elm$html$Html$Events$onClick(
-				author$project$Charts$ToggleLine(line.id)),
-				author$project$Utils$classList(
-				_List_fromArray(
-					[
-						_Utils_Tuple2('active', line.active)
-					]))
-			]),
-		_List_fromArray(
-			[
-				A2(
-				elm$html$Html$div,
-				_List_fromArray(
-					[
-						elm$svg$Svg$Attributes$style('border: 8px solid ' + line.color),
-						elm$svg$Svg$Attributes$style('background-color: ' + line.color),
-						elm$svg$Svg$Attributes$class('circle'),
-						elm$svg$Svg$Attributes$width('300px'),
-						elm$svg$Svg$Attributes$height('300px')
-					]),
-				_List_fromArray(
-					[author$project$Charts$galka])),
-				A2(
-				elm$html$Html$span,
-				_List_Nil,
-				_List_fromArray(
-					[
-						elm$html$Html$text(line.title)
-					]))
-			]));
+	return A2(author$project$Lines$viewBtn, author$project$Charts$ToggleLine, line);
 };
 var author$project$Charts$viewLineBtns = function (lines) {
 	return A2(
 		elm$html$Html$div,
-		_List_Nil,
+		_List_fromArray(
+			[
+				elm$svg$Svg$Attributes$class('buttons')
+			]),
 		A2(elm$core$List$map, author$project$Charts$viewLineBtn, lines));
 };
 var author$project$Grids$Frame$viewBoxAttr = F2(

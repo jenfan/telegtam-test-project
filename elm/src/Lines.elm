@@ -1,9 +1,11 @@
-module Lines exposing (Line, draw, init, toString, transform, valuesRange)
+module Lines exposing (Line, draw, init, toString, transform, valuesRange, viewBtn)
 
+import Html exposing (Html, button, div, span, text)
+import Html.Events exposing (onClick)
 import Points exposing (Point)
 import Ranges exposing (Range, Size, XY, XYRanges)
-import Svg exposing (Attribute, Svg)
-import Svg.Attributes exposing (class, fill, id, stroke, strokeWidth)
+import Svg exposing (Attribute, Svg, svg)
+import Svg.Attributes exposing (..)
 import Transforms exposing (Transform)
 import Utils exposing (classList)
 
@@ -72,3 +74,41 @@ valuesRange lines =
         |> List.map .points
         |> List.concat
         |> Points.range
+
+
+viewBtn : (Int -> msg) -> Line -> Html msg
+viewBtn msg line =
+    button
+        [ onClick (msg line.id)
+        , classList [ ( "active", line.active ) ]
+        ]
+        [ div
+            [ "background-color: "
+                ++ backgroundColor line
+                ++ "; border: 8px solid "
+                ++ line.color
+                |> style
+            , class "circle"
+            ]
+            [ galka ]
+        , span [] [ Html.text line.title ]
+        ]
+
+
+backgroundColor : Line -> String
+backgroundColor line =
+    if line.active then
+        line.color
+
+    else
+        "transparent"
+
+
+galka =
+    svg
+        [ height "45"
+        , width "45"
+        , viewBox "0 0 159.67 125.84"
+        ]
+        [ Svg.path [ fill "none", stroke "none", d "M154.22,5.45h0a18.31,18.31,0,0,0-25.82,0L52.23,81.62l-20.95-21a18.32,18.32,0,0,0-25.83,0h0a18.32,18.32,0,0,0,0,25.83l33,33c.26.3.54.6.83.89h0a18.31,18.31,0,0,0,25.82,0l89.11-89.11A18.31,18.31,0,0,0,154.22,5.45Z" ] []
+        ]
