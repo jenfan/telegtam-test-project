@@ -3,7 +3,7 @@ module Transforms exposing (Scale, Transform, Transition(..), Translate, calcTra
 import Ranges exposing (Range, Size, XY, XYRanges)
 import Svg exposing (Attribute, Svg, g)
 import Svg.Attributes exposing (class, transform)
-import Tuples exposing (joinWithComma)
+import Utils exposing (joinWithComma)
 
 
 type alias Scale =

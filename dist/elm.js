@@ -4987,9 +4987,9 @@ var author$project$Data$y0 = _List_fromArray(
 	[37, 20, 32, 39, 32, 35, 19, 65, 36, 62, 113, 69, 120, 60, 51, 49, 71, 122, 149, 69, 57, 21, 33, 55, 92, 62, 47, 50, 56, 116, 63, 60, 55, 65, 76, 33, 45, 64, 54, 81, 180, 123, 106, 37, 60, 70, 46, 68, 46, 51, 33, 57, 75, 70, 95, 70, 50, 68, 63, 66, 53, 38, 52, 109, 121, 53, 36, 71, 96, 55, 58, 29, 31, 55, 52, 44, 126, 191, 73, 87, 255, 278, 219, 170, 129, 125, 126, 84, 65, 53, 154, 57, 71, 64, 75, 72, 39, 47, 52, 73, 89, 156, 86, 105, 88, 45, 33, 56, 142, 124, 114, 64]);
 var author$project$Data$y1 = _List_fromArray(
 	[22, 12, 30, 40, 33, 23, 18, 41, 45, 69, 57, 61, 70, 47, 31, 34, 40, 55, 27, 57, 48, 32, 40, 49, 54, 49, 34, 51, 51, 51, 66, 51, 94, 60, 64, 28, 44, 96, 49, 73, 30, 88, 63, 42, 56, 67, 52, 67, 35, 61, 40, 55, 63, 61, 105, 59, 51, 76, 63, 57, 47, 56, 51, 98, 103, 62, 54, 104, 48, 41, 41, 37, 30, 28, 26, 37, 65, 86, 70, 81, 54, 74, 70, 50, 74, 79, 85, 62, 36, 46, 68, 43, 66, 50, 28, 66, 39, 23, 63, 74, 83, 66, 40, 60, 29, 36, 27, 54, 89, 50, 73, 52]);
-var author$project$Lines$Line = F4(
-	function (points, active, id, color) {
-		return {active: active, color: color, id: id, points: points};
+var author$project$Lines$Line = F5(
+	function (points, active, id, color, title) {
+		return {active: active, color: color, id: id, points: points, title: title};
 	});
 var author$project$Points$Point = function (a) {
 	return {$: 'Point', a: a};
@@ -5105,12 +5105,14 @@ var author$project$Lines$init = function (_n0) {
 	var points = _n0.points;
 	var id = _n0.id;
 	var color = _n0.color;
-	return A4(
+	var title = _n0.title;
+	return A5(
 		author$project$Lines$Line,
 		A2(elm$core$List$map, author$project$Points$initXY, points),
 		true,
 		id,
-		color);
+		color,
+		title);
 };
 var elm$core$List$map2 = _List_map2;
 var elm$core$Tuple$pair = F2(
@@ -5122,13 +5124,15 @@ var author$project$Data$init = function () {
 		{
 			color: '#F34C44',
 			id: 1,
-			points: A3(elm$core$List$map2, elm$core$Tuple$pair, author$project$Data$x, author$project$Data$y1)
+			points: A3(elm$core$List$map2, elm$core$Tuple$pair, author$project$Data$x, author$project$Data$y1),
+			title: 'y1'
 		});
 	var line1 = author$project$Lines$init(
 		{
 			color: '#3DC23F',
 			id: 0,
-			points: A3(elm$core$List$map2, elm$core$Tuple$pair, author$project$Data$x, author$project$Data$y0)
+			points: A3(elm$core$List$map2, elm$core$Tuple$pair, author$project$Data$x, author$project$Data$y0),
+			title: 'y0'
 		});
 	return _List_fromArray(
 		[line1, line2]);
@@ -6083,9 +6087,6 @@ var author$project$Main$update = F2(
 var author$project$Charts$ToggleLine = function (a) {
 	return {$: 'ToggleLine', a: a};
 };
-var author$project$Lines$title = function (line) {
-	return 'Toggle ' + elm$core$String$fromInt(line.id);
-};
 var elm$json$Json$Decode$map = _Json_map1;
 var elm$json$Json$Decode$map2 = _Json_map2;
 var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
@@ -6100,11 +6101,55 @@ var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 			return 3;
 	}
 };
+var elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
+var elm$svg$Svg$path = elm$svg$Svg$trustedNode('path');
+var elm$svg$Svg$svg = elm$svg$Svg$trustedNode('svg');
+var elm$svg$Svg$Attributes$d = _VirtualDom_attribute('d');
+var elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
+var elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
+var elm$svg$Svg$Attributes$stroke = _VirtualDom_attribute('stroke');
+var elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
+var elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
+var author$project$Charts$galka = A2(
+	elm$svg$Svg$svg,
+	_List_fromArray(
+		[
+			elm$svg$Svg$Attributes$height('45'),
+			elm$svg$Svg$Attributes$width('45'),
+			elm$svg$Svg$Attributes$viewBox('0 0 159.67 125.84')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			elm$svg$Svg$path,
+			_List_fromArray(
+				[
+					elm$svg$Svg$Attributes$fill('#fff'),
+					elm$svg$Svg$Attributes$stroke('none'),
+					elm$svg$Svg$Attributes$d('M154.22,5.45h0a18.31,18.31,0,0,0-25.82,0L52.23,81.62l-20.95-21a18.32,18.32,0,0,0-25.83,0h0a18.32,18.32,0,0,0,0,25.83l33,33c.26.3.54.6.83.89h0a18.31,18.31,0,0,0,25.82,0l89.11-89.11A18.31,18.31,0,0,0,154.22,5.45Z')
+				]),
+			_List_Nil)
+		]));
+var elm$core$Tuple$second = function (_n0) {
+	var y = _n0.b;
+	return y;
+};
+var elm$svg$Svg$Attributes$class = _VirtualDom_attribute('class');
+var author$project$Utils$classList = function (list) {
+	return elm$svg$Svg$Attributes$class(
+		A2(
+			elm$core$String$join,
+			' ',
+			A2(
+				elm$core$List$map,
+				elm$core$Tuple$first,
+				A2(elm$core$List$filter, elm$core$Tuple$second, list))));
+};
 var elm$html$Html$button = _VirtualDom_node('button');
+var elm$html$Html$div = _VirtualDom_node('div');
+var elm$html$Html$span = _VirtualDom_node('span');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
-var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
-var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
 var elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -6122,7 +6167,7 @@ var elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		elm$json$Json$Decode$succeed(msg));
 };
-var elm$svg$Svg$Attributes$class = _VirtualDom_attribute('class');
+var elm$svg$Svg$Attributes$style = _VirtualDom_attribute('style');
 var author$project$Charts$viewLineBtn = function (line) {
 	return A2(
 		elm$html$Html$button,
@@ -6130,23 +6175,41 @@ var author$project$Charts$viewLineBtn = function (line) {
 			[
 				elm$html$Html$Events$onClick(
 				author$project$Charts$ToggleLine(line.id)),
-				A2(elm$html$Html$Attributes$style, 'background-color', line.color),
-				elm$svg$Svg$Attributes$class('button')
+				author$project$Utils$classList(
+				_List_fromArray(
+					[
+						_Utils_Tuple2('active', line.active)
+					]))
 			]),
 		_List_fromArray(
 			[
-				elm$html$Html$text(
-				author$project$Lines$title(line))
+				A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$svg$Svg$Attributes$style('border: 8px solid ' + line.color),
+						elm$svg$Svg$Attributes$style('background-color: ' + line.color),
+						elm$svg$Svg$Attributes$class('circle'),
+						elm$svg$Svg$Attributes$width('300px'),
+						elm$svg$Svg$Attributes$height('300px')
+					]),
+				_List_fromArray(
+					[author$project$Charts$galka])),
+				A2(
+				elm$html$Html$span,
+				_List_Nil,
+				_List_fromArray(
+					[
+						elm$html$Html$text(line.title)
+					]))
 			]));
 };
-var elm$html$Html$div = _VirtualDom_node('div');
 var author$project$Charts$viewLineBtns = function (lines) {
 	return A2(
 		elm$html$Html$div,
 		_List_Nil,
 		A2(elm$core$List$map, author$project$Charts$viewLineBtn, lines));
 };
-var elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
 var author$project$Grids$Frame$viewBoxAttr = F2(
 	function (_n0, margin) {
 		var w = _n0.a;
@@ -6182,7 +6245,6 @@ var author$project$Points$renderY = function (_n0) {
 	return elm$core$String$fromFloat(-y);
 };
 var elm$svg$Svg$text = elm$virtual_dom$VirtualDom$text;
-var elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
 var elm$svg$Svg$text_ = elm$svg$Svg$trustedNode('text');
 var elm$svg$Svg$Attributes$transform = _VirtualDom_attribute('transform');
 var elm$svg$Svg$Attributes$x = _VirtualDom_attribute('x');
@@ -6210,7 +6272,6 @@ var author$project$Dials$h = F2(
 		return A2(author$project$Dials$textX, title, point);
 	});
 var elm$svg$Svg$line = elm$svg$Svg$trustedNode('line');
-var elm$svg$Svg$Attributes$stroke = _VirtualDom_attribute('stroke');
 var elm$svg$Svg$Attributes$strokeWidth = _VirtualDom_attribute('stroke-width');
 var elm$svg$Svg$Attributes$x1 = _VirtualDom_attribute('x1');
 var elm$svg$Svg$Attributes$x2 = _VirtualDom_attribute('x2');
@@ -6263,6 +6324,91 @@ var author$project$Dials$v = F3(
 				A2(author$project$Dials$textY, title, point)
 			]);
 	});
+var elm$core$Basics$ge = _Utils_ge;
+var elm$core$Basics$modBy = _Basics_modBy;
+var elm$time$Time$posixToMillis = function (_n0) {
+	var millis = _n0.a;
+	return millis;
+};
+var elm$time$Time$Zone = F2(
+	function (a, b) {
+		return {$: 'Zone', a: a, b: b};
+	});
+var elm$time$Time$utc = A2(elm$time$Time$Zone, 0, _List_Nil);
+var AdrianRibao$elm_derberos_date$Derberos$Date$Core$posixToCivil = function (time) {
+	var milliseconds = elm$time$Time$posixToMillis(time);
+	var minute = A2(
+		elm$core$Basics$modBy,
+		60,
+		elm$core$Basics$floor(milliseconds / (60 * 1000)));
+	var minutes = elm$core$Basics$floor(milliseconds / (60 * 1000));
+	var rawDay = elm$core$Basics$floor((minutes / (60 * 24)) + 719468);
+	var second = A2(
+		elm$core$Basics$modBy,
+		60,
+		elm$core$Basics$floor(milliseconds / 1000));
+	var millis = A2(elm$core$Basics$modBy, 1000, milliseconds);
+	var hour = A2(
+		elm$core$Basics$modBy,
+		24,
+		elm$core$Basics$floor(milliseconds / ((60 * 60) * 1000)));
+	var era = (((rawDay >= 0) ? rawDay : (rawDay - 146096)) / 146097) | 0;
+	var dayOfEra = rawDay - (era * 146097);
+	var yearOfEra = ((((dayOfEra - ((dayOfEra / 1460) | 0)) + ((dayOfEra / 36524) | 0)) - ((dayOfEra / 146096) | 0)) / 365) | 0;
+	var dayOfYear = dayOfEra - (((365 * yearOfEra) + ((yearOfEra / 4) | 0)) - ((yearOfEra / 100) | 0));
+	var mp = (((5 * dayOfYear) + 2) / 153) | 0;
+	var month = mp + ((mp < 10) ? 3 : (-9));
+	var year = yearOfEra + (era * 400);
+	return {
+		day: (dayOfYear - ((((153 * mp) + 2) / 5) | 0)) + 1,
+		hour: hour,
+		millis: millis,
+		minute: minute,
+		month: month,
+		second: second,
+		year: year + ((month <= 2) ? 1 : 0),
+		zone: elm$time$Time$utc
+	};
+};
+var author$project$Date$monthString = function (num) {
+	switch (num) {
+		case 1:
+			return 'Jan';
+		case 2:
+			return 'Feb';
+		case 3:
+			return 'Mar';
+		case 4:
+			return 'Apr';
+		case 5:
+			return 'May';
+		case 6:
+			return 'Jun';
+		case 7:
+			return 'Jul';
+		case 8:
+			return 'Aug';
+		case 9:
+			return 'Sep';
+		case 10:
+			return 'Oct';
+		case 11:
+			return 'Nov';
+		case 12:
+			return 'Dec';
+		default:
+			return '';
+	}
+};
+var elm$time$Time$Posix = function (a) {
+	return {$: 'Posix', a: a};
+};
+var elm$time$Time$millisToPosix = elm$time$Time$Posix;
+var author$project$Date$fromPosix = function (millisecond) {
+	var date = AdrianRibao$elm_derberos_date$Derberos$Date$Core$posixToCivil(
+		elm$time$Time$millisToPosix(millisecond));
+	return author$project$Date$monthString(date.month) + (' ' + elm$core$String$fromInt(date.day));
+};
 var author$project$Points$unscale = F2(
 	function (_n0, _n1) {
 		var scaleX = _n0.a;
@@ -6296,13 +6442,13 @@ var author$project$Points$actual = F3(
 var author$project$Points$renderRoundX = function (_n0) {
 	var _n1 = _n0.a;
 	var x = _n1.a;
-	return elm$core$String$fromInt(
-		elm$core$Basics$round(x));
+	return elm$core$Basics$round(x);
 };
 var author$project$Points$actualRoundX = F3(
 	function (prescale, transform_, point) {
-		return author$project$Points$renderRoundX(
-			A3(author$project$Points$actual, prescale, transform_, point));
+		return author$project$Date$fromPosix(
+			author$project$Points$renderRoundX(
+				A3(author$project$Points$actual, prescale, transform_, point)));
 	});
 var author$project$Points$renderRoundY = function (_n0) {
 	var _n1 = _n0.a;
@@ -6394,20 +6540,6 @@ var author$project$Grids$Frame$viewDial = function (frame) {
 		return A2(elm$svg$Svg$g, _List_Nil, _List_Nil);
 	}
 };
-var elm$core$Tuple$second = function (_n0) {
-	var y = _n0.b;
-	return y;
-};
-var author$project$Lines$classList = function (list) {
-	return elm$svg$Svg$Attributes$class(
-		A2(
-			elm$core$String$join,
-			' ',
-			A2(
-				elm$core$List$map,
-				elm$core$Tuple$first,
-				A2(elm$core$List$filter, elm$core$Tuple$second, list))));
-};
 var author$project$Points$render = function (point) {
 	return author$project$Points$renderX(point) + (',' + author$project$Points$renderY(point));
 };
@@ -6420,7 +6552,6 @@ var author$project$Lines$pointsAttr = function (line) {
 			A2(elm$core$List$map, author$project$Points$render, line.points)));
 };
 var elm$svg$Svg$polyline = elm$svg$Svg$trustedNode('polyline');
-var elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
 var elm$svg$Svg$Attributes$id = _VirtualDom_attribute('id');
 var author$project$Lines$draw = F3(
 	function (transform_, size, line) {
@@ -6432,7 +6563,7 @@ var author$project$Lines$draw = F3(
 					elm$svg$Svg$Attributes$fill('none'),
 					elm$svg$Svg$Attributes$stroke(line.color),
 					elm$svg$Svg$Attributes$strokeWidth('2'),
-					author$project$Lines$classList(
+					author$project$Utils$classList(
 					_List_fromArray(
 						[
 							_Utils_Tuple2('hidden', !line.active),
@@ -6444,7 +6575,7 @@ var author$project$Lines$draw = F3(
 			_List_Nil);
 	});
 var author$project$Transforms$Slow = {$: 'Slow'};
-var author$project$Tuples$joinWithComma = function (_n0) {
+var author$project$Utils$joinWithComma = function (_n0) {
 	var x = _n0.a;
 	var y = _n0.b;
 	return A2(
@@ -6462,7 +6593,7 @@ var author$project$Transforms$scaleAttr = function (_n0) {
 		function (v) {
 			return 'scale(' + (v + ')');
 		}(
-			author$project$Tuples$joinWithComma(scale)));
+			author$project$Utils$joinWithComma(scale)));
 };
 var author$project$Transforms$transitionToStr = function (transition) {
 	if (transition.$ === 'Fast') {
@@ -6489,7 +6620,7 @@ var author$project$Transforms$translateAttr = function (translate) {
 		function (v) {
 			return 'translate(' + (v + ')');
 		}(
-			author$project$Tuples$joinWithComma(translate)));
+			author$project$Utils$joinWithComma(translate)));
 };
 var author$project$Transforms$translateGroup = F3(
 	function (transform_, transition, svg_) {
@@ -6550,10 +6681,7 @@ var author$project$Grids$Frame$viewLines = function (frame) {
 		frame.size,
 		author$project$Grids$viewLines(frame));
 };
-var elm$svg$Svg$svg = elm$svg$Svg$trustedNode('svg');
-var elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
 var elm$svg$Svg$Attributes$preserveAspectRatio = _VirtualDom_attribute('preserveAspectRatio');
-var elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
 var author$project$Grids$Frame$view = function (frame) {
 	return A2(
 		elm$svg$Svg$svg,
@@ -6704,7 +6832,6 @@ var author$project$Grids$Map$viewMapBox = function (map) {
 		author$project$Grids$Map$MapBoxMsg,
 		author$project$MapBoxes$view(map.mapBox));
 };
-var elm$svg$Svg$Attributes$style = _VirtualDom_attribute('style');
 var author$project$Grids$Map$view = function (grid) {
 	return A2(
 		elm$svg$Svg$svg,
@@ -7042,6 +7169,8 @@ var elm$browser$Debugger$Overlay$viewBadMetadata = function (_n0) {
 };
 var elm$browser$Debugger$Overlay$Cancel = {$: 'Cancel'};
 var elm$browser$Debugger$Overlay$Proceed = {$: 'Proceed'};
+var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
 var elm$browser$Debugger$Overlay$viewButtons = function (buttons) {
 	var btn = F2(
 		function (msg, string) {
@@ -7152,7 +7281,6 @@ var elm$browser$Debugger$Overlay$viewMessage = F4(
 						]))
 				]));
 	});
-var elm$html$Html$span = _VirtualDom_node('span');
 var elm$browser$Debugger$Overlay$button = F2(
 	function (msg, label) {
 		return A2(
@@ -9814,7 +9942,6 @@ var elm$browser$Debugger$History$addRecent = F3(
 	});
 var elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
 var elm$core$Array$bitMask = 4294967295 >>> (32 - elm$core$Array$shiftStep);
-var elm$core$Basics$ge = _Utils_ge;
 var elm$core$Bitwise$and = _Bitwise_and;
 var elm$core$Elm$JsArray$push = _JsArray_push;
 var elm$core$Elm$JsArray$singleton = _JsArray_singleton;

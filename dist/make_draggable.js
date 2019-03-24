@@ -30,10 +30,10 @@ function make_draggable(app) {
         offsetX = clickedSvgX - x + 5; // 5 becase of border width of box
         offsetX2 = clickedSvgX - x - 5 + width; // 5 becase of border width of box
         draggingEle = 'box'
-        if (clickedSvgX  - 10 < x) {
+        if (clickedSvgX  - 20 < x) {
           draggingEle = 'leftBound';
         }
-        if (clickedSvgX  + 15 - width > x) {
+        if (clickedSvgX  + 10 - width > x) {
           draggingEle = 'rightBound';
         }
       }

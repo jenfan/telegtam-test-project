@@ -4,12 +4,14 @@ import Data
 import Grids exposing (Grid)
 import Grids.Frame as Frame exposing (Frame)
 import Grids.Map as Map exposing (Map)
-import Html exposing (Html, button, div, text)
+import Html exposing (Html, button, div, span, text)
 import Html.Attributes
 import Html.Events exposing (onClick)
 import Lines exposing (Line)
 import Ranges exposing (Size)
+import Svg exposing (Svg, svg)
 import Svg.Attributes exposing (..)
+import Utils exposing (classList)
 
 
 type alias Chart =
@@ -125,7 +127,25 @@ viewLineBtn : Line -> Html Msg
 viewLineBtn line =
     button
         [ onClick (ToggleLine line.id)
-        , Html.Attributes.style "background-color" line.color
-        , class "button"
+        , classList [ ( "active", line.active ) ]
         ]
-        [ text <| Lines.title line ]
+        [ div
+            [ style <| "border: 8px solid " ++ line.color
+            , style <| "background-color: " ++ line.color
+            , class "circle"
+            , width "300px"
+            , height "300px"
+            ]
+            [ galka ]
+        , span [] [ Html.text line.title ]
+        ]
+
+
+galka =
+    svg
+        [ height "45"
+        , width "45"
+        , viewBox "0 0 159.67 125.84"
+        ]
+        [ Svg.path [ fill "#fff", stroke "none", d "M154.22,5.45h0a18.31,18.31,0,0,0-25.82,0L52.23,81.62l-20.95-21a18.32,18.32,0,0,0-25.83,0h0a18.32,18.32,0,0,0,0,25.83l33,33c.26.3.54.6.83.89h0a18.31,18.31,0,0,0,25.82,0l89.11-89.11A18.31,18.31,0,0,0,154.22,5.45Z" ] []
+        ]

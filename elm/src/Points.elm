@@ -1,5 +1,6 @@
 module Points exposing (Point, actualRoundX, actualRoundY, init, initWithX0, initWithY0, initXY, range, render, renderX, renderY, transform)
 
+import Date
 import Ranges exposing (Size, XY, XYRanges)
 import Transforms exposing (Scale, Transform, Translate)
 
@@ -39,6 +40,7 @@ actualRoundX : Scale -> Transform -> Point -> String
 actualRoundX prescale transform_ point =
     actual prescale transform_ point
         |> renderRoundX
+        |> Date.fromPosix
 
 
 actualRoundY : Scale -> Transform -> Point -> String
@@ -90,9 +92,9 @@ renderY (Point ( _, y )) =
     String.fromFloat -y
 
 
-renderRoundX : Point -> String
+renderRoundX : Point -> Int
 renderRoundX (Point ( x, _ )) =
-    String.fromInt <| round x
+    round x
 
 
 renderRoundY : Point -> String

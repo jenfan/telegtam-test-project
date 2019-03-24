@@ -1,11 +1,11 @@
-module Lines exposing (Line, draw, init, title, toString, transform, valuesRange)
+module Lines exposing (Line, draw, init, toString, transform, valuesRange)
 
 import Points exposing (Point)
 import Ranges exposing (Range, Size, XY, XYRanges)
-import Svg exposing (..)
-import Svg.Attributes exposing (..)
+import Svg exposing (Attribute, Svg)
+import Svg.Attributes exposing (class, fill, id, stroke, strokeWidth)
 import Transforms exposing (Transform)
-import Tuples
+import Utils exposing (classList)
 
 
 type alias Line =
@@ -13,6 +13,7 @@ type alias Line =
     , active : Bool
     , id : Int
     , color : String
+    , title : String
     }
 
 
@@ -20,10 +21,11 @@ init :
     { id : Int
     , color : String
     , points : List XY
+    , title : String
     }
     -> Line
-init { points, id, color } =
-    Line (List.map Points.initXY points) True id color
+init { points, id, color, title } =
+    Line (List.map Points.initXY points) True id color title
 
 
 toString : Line -> String
@@ -31,11 +33,6 @@ toString { points } =
     points
         |> List.map Points.render
         |> String.join " "
-
-
-title : Line -> String
-title line =
-    "Toggle " ++ String.fromInt line.id
 
 
 draw : Transform -> Size -> Line -> Svg msg
@@ -59,15 +56,6 @@ transform transform_ line =
                 |> List.map (Points.transform transform_)
     in
     { line | points = newPoints }
-
-
-classList : List ( String, Bool ) -> Attribute msg
-classList list =
-    list
-        |> List.filter Tuple.second
-        |> List.map Tuple.first
-        |> String.join " "
-        |> class
 
 
 pointsAttr : Line -> Attribute msg

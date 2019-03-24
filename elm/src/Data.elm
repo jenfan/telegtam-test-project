@@ -11,6 +11,7 @@ init =
                 { points = List.map2 Tuple.pair x y0
                 , id = 0
                 , color = "#3DC23F"
+                , title = "y0"
                 }
 
         line2 =
@@ -18,6 +19,7 @@ init =
                 { points = List.map2 Tuple.pair x y1
                 , id = 1
                 , color = "#F34C44"
+                , title = "y1"
                 }
     in
     [ line1, line2 ]
