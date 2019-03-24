@@ -20,18 +20,23 @@ init :
     , lines : List Line
     , margins : Int
     , position : Range
+    , id : String
     }
     -> Frame
-init { size, lines, margins, position } =
+init { size, position, lines, margins, id } =
     let
+        ( scaledLines, pretransformScale ) =
+            Grids.pretransformLines lines
+
         valuesRange =
-            Lines.valuesRange lines
+            Lines.valuesRange scaledLines
     in
     { size = size
     , margins = margins
     , valuesRange = valuesRange
     , transform = Transforms.calcTransform size valuesRange
-    , lines = lines
+    , pretransformScale = pretransformScale
+    , lines = scaledLines
     , position = position
     }
 
@@ -76,7 +81,7 @@ viewDial frame =
                 dial =
                     Dials.init frame.size
             in
-            Dials.view frame.size range frame.transform dial
+            Dials.view frame.size range frame.transform frame.pretransformScale dial
 
         Nothing ->
             g [] []

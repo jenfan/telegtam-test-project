@@ -46,6 +46,7 @@ init size =
                 { size = frameSize size
                 , lines = lines
                 , margins = 20
+                , id = id
                 , position = map.mapBox.position
                 }
     in

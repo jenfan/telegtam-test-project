@@ -35,23 +35,24 @@ transform transform_ point =
         |> translate transform_.translate
 
 
-actualRoundX : Transform -> Point -> String
-actualRoundX transform_ point =
-    actual transform_ point
+actualRoundX : Scale -> Transform -> Point -> String
+actualRoundX prescale transform_ point =
+    actual prescale transform_ point
         |> renderRoundX
 
 
-actualRoundY : Transform -> Point -> String
-actualRoundY transform_ point =
-    actual transform_ point
+actualRoundY : Scale -> Transform -> Point -> String
+actualRoundY prescale transform_ point =
+    actual prescale transform_ point
         |> renderRoundY
 
 
-actual : Transform -> Point -> Point
-actual transform_ point =
+actual : Scale -> Transform -> Point -> Point
+actual prescale transform_ point =
     point
         |> untranslate transform_.translate
         |> unscale transform_.scale
+        |> unscale prescale
 
 
 scale : Scale -> Point -> Point

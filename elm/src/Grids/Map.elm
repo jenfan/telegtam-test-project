@@ -23,18 +23,19 @@ init :
     -> Map
 init { size, lines, margins, id } =
     let
-        valuesRange =
-            Lines.valuesRange lines
+        ( scaledLines, pretransformScale ) =
+            Grids.pretransformLines lines
 
-        mapBox =
-            MapBoxes.init size id
+        valuesRange =
+            Lines.valuesRange scaledLines
     in
     { size = size
     , margins = margins
     , valuesRange = valuesRange
     , transform = Transforms.calcTransform size valuesRange
-    , lines = lines
-    , mapBox = mapBox
+    , pretransformScale = pretransformScale
+    , lines = scaledLines
+    , mapBox = MapBoxes.init size id
     , id = id
     }
 

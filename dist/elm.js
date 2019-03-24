@@ -4982,7 +4982,7 @@ var author$project$Charts$mapSize = function (size) {
 		size);
 };
 var author$project$Data$x = _List_fromArray(
-	[1542412.8, 1542499.2, 1542585.6, 1542672.0, 1542758.4, 1542844.8, 1542931.2, 1543017.6, 1543104.0, 1543190.4, 1543276.8, 1543363.2, 1543449.6, 1543536.0, 1543622.4, 1543708.8, 1543795.2, 1543881.6, 1543968.0, 1544054.4, 1544140.8, 1544227.2, 1544313.6, 1544400.0, 1544486.4, 1544572.8, 1544659.2, 1544745.6, 1544832.0, 1544918.4, 1545004.8, 1545091.2, 1545177.6, 1545264.0, 1545350.4, 1545436.8, 1545523.2, 1545609.6, 1545696.0, 1545782.4, 1545868.8, 1545955.2, 1546041.6, 1546128.0, 1546214.4, 1546300.8, 1546387.2, 1546473.6, 1546560.0, 1546646.4, 1546732.8, 1546819.2, 1546905.6, 1546992.0, 1547078.4, 1547164.8, 1547251.2, 1547337.6, 1547424.0, 1547510.4, 1547596.8, 1547683.2, 1547769.6, 1547856.0, 1547942.4, 1548028.8, 1548115.2, 1548201.6, 1548288.0, 1548374.4, 1548460.8, 1548547.2, 1548633.6, 1548720.0, 1548806.4, 1548892.8, 1548979.2, 1549065.6, 1549152.0, 1549238.4, 1549324.8, 1549411.2, 1549497.6, 1549584.0, 1549670.4, 1549756.8, 1549843.2, 1549929.6, 1550016.0, 1550102.4, 1550188.8, 1550275.2, 1550361.6, 1550448.0, 1550534.4, 1550620.8, 1550707.2, 1550793.6, 1550880.0, 1550966.4, 1551052.8, 1551139.2, 1551225.6, 1551312.0, 1551398.4, 1551484.8, 1551571.2, 1551657.6, 1551744.0, 1551830.4, 1551916.8, 1552003.2]);
+	[1542412800000, 1542499200000, 1542585600000, 1542672000000, 1542758400000, 1542844800000, 1542931200000, 1543017600000, 1543104000000, 1543190400000, 1543276800000, 1543363200000, 1543449600000, 1543536000000, 1543622400000, 1543708800000, 1543795200000, 1543881600000, 1543968000000, 1544054400000, 1544140800000, 1544227200000, 1544313600000, 1544400000000, 1544486400000, 1544572800000, 1544659200000, 1544745600000, 1544832000000, 1544918400000, 1545004800000, 1545091200000, 1545177600000, 1545264000000, 1545350400000, 1545436800000, 1545523200000, 1545609600000, 1545696000000, 1545782400000, 1545868800000, 1545955200000, 1546041600000, 1546128000000, 1546214400000, 1546300800000, 1546387200000, 1546473600000, 1546560000000, 1546646400000, 1546732800000, 1546819200000, 1546905600000, 1546992000000, 1547078400000, 1547164800000, 1547251200000, 1547337600000, 1547424000000, 1547510400000, 1547596800000, 1547683200000, 1547769600000, 1547856000000, 1547942400000, 1548028800000, 1548115200000, 1548201600000, 1548288000000, 1548374400000, 1548460800000, 1548547200000, 1548633600000, 1548720000000, 1548806400000, 1548892800000, 1548979200000, 1549065600000, 1549152000000, 1549238400000, 1549324800000, 1549411200000, 1549497600000, 1549584000000, 1549670400000, 1549756800000, 1549843200000, 1549929600000, 1550016000000, 1550102400000, 1550188800000, 1550275200000, 1550361600000, 1550448000000, 1550534400000, 1550620800000, 1550707200000, 1550793600000, 1550880000000, 1550966400000, 1551052800000, 1551139200000, 1551225600000, 1551312000000, 1551398400000, 1551484800000, 1551571200000, 1551657600000, 1551744000000, 1551830400000, 1551916800000, 1552003200000]);
 var author$project$Data$y0 = _List_fromArray(
 	[37, 20, 32, 39, 32, 35, 19, 65, 36, 62, 113, 69, 120, 60, 51, 49, 71, 122, 149, 69, 57, 21, 33, 55, 92, 62, 47, 50, 56, 116, 63, 60, 55, 65, 76, 33, 45, 64, 54, 81, 180, 123, 106, 37, 60, 70, 46, 68, 46, 51, 33, 57, 75, 70, 95, 70, 50, 68, 63, 66, 53, 38, 52, 109, 121, 53, 36, 71, 96, 55, 58, 29, 31, 55, 52, 44, 126, 191, 73, 87, 255, 278, 219, 170, 129, 125, 126, 84, 65, 53, 154, 57, 71, 64, 75, 72, 39, 47, 52, 73, 89, 156, 86, 105, 88, 45, 33, 56, 142, 124, 114, 64]);
 var author$project$Data$y1 = _List_fromArray(
@@ -5133,6 +5133,43 @@ var author$project$Data$init = function () {
 	return _List_fromArray(
 		[line1, line2]);
 }();
+var author$project$Points$scale = F2(
+	function (_n0, _n1) {
+		var scaleX = _n0.a;
+		var scaleY = _n0.b;
+		var _n2 = _n1.a;
+		var x = _n2.a;
+		var y = _n2.b;
+		return author$project$Points$Point(
+			_Utils_Tuple2(scaleX * x, scaleY * y));
+	});
+var author$project$Points$translate = F2(
+	function (_n0, _n1) {
+		var trX = _n0.a;
+		var trY = _n0.b;
+		var _n2 = _n1.a;
+		var x = _n2.a;
+		var y = _n2.b;
+		return author$project$Points$Point(
+			_Utils_Tuple2(x + trX, y + trY));
+	});
+var author$project$Points$transform = F2(
+	function (transform_, point) {
+		return A2(
+			author$project$Points$translate,
+			transform_.translate,
+			A2(author$project$Points$scale, transform_.scale, point));
+	});
+var author$project$Lines$transform = F2(
+	function (transform_, line) {
+		var newPoints = A2(
+			elm$core$List$map,
+			author$project$Points$transform(transform_),
+			line.points);
+		return _Utils_update(
+			line,
+			{points: newPoints});
+	});
 var author$project$Points$unzip = function (_n0) {
 	var _n1 = _n0.a;
 	var x = _n1.a;
@@ -5254,6 +5291,33 @@ var author$project$Lines$valuesRange = function (lines) {
 				},
 				lines)));
 };
+var elm$core$Basics$fdiv = _Basics_fdiv;
+var author$project$Grids$pretransformLines = function (lines) {
+	var scale = function () {
+		var _n0 = author$project$Lines$valuesRange(lines);
+		if (_n0.$ === 'Just') {
+			var _n1 = _n0.a;
+			var _n2 = _n1.a;
+			var x1 = _n2.a;
+			var x2 = _n2.b;
+			var _n3 = _n1.b;
+			var y1 = _n3.a;
+			var y2 = _n3.b;
+			return _Utils_Tuple2(10000 / x2, 10000 / y2);
+		} else {
+			return _Utils_Tuple2(1, 1);
+		}
+	}();
+	var newLines = A2(
+		elm$core$List$map,
+		author$project$Lines$transform(
+			{
+				scale: scale,
+				translate: _Utils_Tuple2(0.0, 0.0)
+			}),
+		lines);
+	return _Utils_Tuple2(newLines, scale);
+};
 var elm$core$Basics$sub = _Basics_sub;
 var author$project$Ranges$width = function (_n0) {
 	var a = _n0.a;
@@ -5261,7 +5325,6 @@ var author$project$Ranges$width = function (_n0) {
 	return b - a;
 };
 var elm$core$Basics$eq = _Utils_equal;
-var elm$core$Basics$fdiv = _Basics_fdiv;
 var author$project$Transforms$calcScale = F2(
 	function (_n0, _n1) {
 		var w = _n0.a;
@@ -5321,14 +5384,19 @@ var author$project$Transforms$calcTransform = F2(
 	});
 var author$project$Grids$Frame$init = function (_n0) {
 	var size = _n0.size;
+	var position = _n0.position;
 	var lines = _n0.lines;
 	var margins = _n0.margins;
-	var position = _n0.position;
-	var valuesRange = author$project$Lines$valuesRange(lines);
+	var id = _n0.id;
+	var _n1 = author$project$Grids$pretransformLines(lines);
+	var scaledLines = _n1.a;
+	var pretransformScale = _n1.b;
+	var valuesRange = author$project$Lines$valuesRange(scaledLines);
 	return {
-		lines: lines,
+		lines: scaledLines,
 		margins: margins,
 		position: position,
+		pretransformScale: pretransformScale,
 		size: size,
 		transform: A2(author$project$Transforms$calcTransform, size, valuesRange),
 		valuesRange: valuesRange
@@ -5372,13 +5440,16 @@ var author$project$Grids$Map$init = function (_n0) {
 	var lines = _n0.lines;
 	var margins = _n0.margins;
 	var id = _n0.id;
-	var valuesRange = author$project$Lines$valuesRange(lines);
-	var mapBox = A2(author$project$MapBoxes$init, size, id);
+	var _n1 = author$project$Grids$pretransformLines(lines);
+	var scaledLines = _n1.a;
+	var pretransformScale = _n1.b;
+	var valuesRange = author$project$Lines$valuesRange(scaledLines);
 	return {
 		id: id,
-		lines: lines,
-		mapBox: mapBox,
+		lines: scaledLines,
+		mapBox: A2(author$project$MapBoxes$init, size, id),
 		margins: margins,
+		pretransformScale: pretransformScale,
 		size: size,
 		transform: A2(author$project$Transforms$calcTransform, size, valuesRange),
 		valuesRange: valuesRange
@@ -5396,6 +5467,7 @@ var author$project$Charts$init = function (size) {
 		});
 	var frame = author$project$Grids$Frame$init(
 		{
+			id: id,
 			lines: lines,
 			margins: 20,
 			position: map.mapBox.position,
@@ -5877,7 +5949,7 @@ var elm$core$List$filter = F2(
 	});
 var author$project$Grids$toggleLine = F2(
 	function (grid, lineId) {
-		var updateLine = function (line) {
+		var toggle = function (line) {
 			var _n0 = _Utils_eq(line.id, lineId);
 			if (_n0) {
 				return _Utils_update(
@@ -5887,7 +5959,7 @@ var author$project$Grids$toggleLine = F2(
 				return line;
 			}
 		};
-		var lines = A2(elm$core$List$map, updateLine, grid.lines);
+		var lines = A2(elm$core$List$map, toggle, grid.lines);
 		var valuesRange = author$project$Lines$valuesRange(
 			A2(
 				elm$core$List$filter,
@@ -6211,12 +6283,15 @@ var author$project$Points$untranslate = F2(
 		return author$project$Points$Point(
 			_Utils_Tuple2(x - trX, (0 - y) - trY));
 	});
-var author$project$Points$actual = F2(
-	function (transform_, point) {
+var author$project$Points$actual = F3(
+	function (prescale, transform_, point) {
 		return A2(
 			author$project$Points$unscale,
-			transform_.scale,
-			A2(author$project$Points$untranslate, transform_.translate, point));
+			prescale,
+			A2(
+				author$project$Points$unscale,
+				transform_.scale,
+				A2(author$project$Points$untranslate, transform_.translate, point)));
 	});
 var author$project$Points$renderRoundX = function (_n0) {
 	var _n1 = _n0.a;
@@ -6224,10 +6299,10 @@ var author$project$Points$renderRoundX = function (_n0) {
 	return elm$core$String$fromInt(
 		elm$core$Basics$round(x));
 };
-var author$project$Points$actualRoundX = F2(
-	function (transform_, point) {
+var author$project$Points$actualRoundX = F3(
+	function (prescale, transform_, point) {
 		return author$project$Points$renderRoundX(
-			A2(author$project$Points$actual, transform_, point));
+			A3(author$project$Points$actual, prescale, transform_, point));
 	});
 var author$project$Points$renderRoundY = function (_n0) {
 	var _n1 = _n0.a;
@@ -6235,10 +6310,10 @@ var author$project$Points$renderRoundY = function (_n0) {
 	return elm$core$String$fromInt(
 		elm$core$Basics$round(-y));
 };
-var author$project$Points$actualRoundY = F2(
-	function (transform_, point) {
+var author$project$Points$actualRoundY = F3(
+	function (prescale, transform_, point) {
 		return author$project$Points$renderRoundY(
-			A2(author$project$Points$actual, transform_, point));
+			A3(author$project$Points$actual, prescale, transform_, point));
 	});
 var author$project$Points$initWithX0 = function (y) {
 	return A2(author$project$Points$init, 0, y);
@@ -6260,8 +6335,8 @@ var author$project$Ranges$initListFloats = F2(
 				A2(elm$core$List$range, 0, numOfDials - 1)));
 	});
 var elm$svg$Svg$g = elm$svg$Svg$trustedNode('g');
-var author$project$Dials$view = F4(
-	function (_n0, _n1, transform, dial) {
+var author$project$Dials$view = F5(
+	function (_n0, _n1, transform, prescale, dial) {
 		var width = _n0.a;
 		var height = _n0.b;
 		var xRange = _n1.a;
@@ -6272,7 +6347,7 @@ var author$project$Dials$view = F4(
 				A2(
 					author$project$Dials$v,
 					width,
-					author$project$Points$actualRoundY(transform)),
+					A2(author$project$Points$actualRoundY, prescale, transform)),
 				A2(
 					elm$core$List$map,
 					author$project$Points$initWithX0,
@@ -6280,7 +6355,7 @@ var author$project$Dials$view = F4(
 		var hDivs = A2(
 			elm$core$List$map,
 			author$project$Dials$h(
-				author$project$Points$actualRoundX(transform)),
+				A2(author$project$Points$actualRoundX, prescale, transform)),
 			A2(
 				elm$core$List$map,
 				author$project$Points$initWithY0,
@@ -6314,7 +6389,7 @@ var author$project$Grids$Frame$viewDial = function (frame) {
 	if (_n0.$ === 'Just') {
 		var range = _n0.a;
 		var dial = author$project$Dials$init(frame.size);
-		return A4(author$project$Dials$view, frame.size, range, frame.transform, dial);
+		return A5(author$project$Dials$view, frame.size, range, frame.transform, frame.pretransformScale, dial);
 	} else {
 		return A2(elm$svg$Svg$g, _List_Nil, _List_Nil);
 	}
@@ -6389,7 +6464,7 @@ var author$project$Transforms$scaleAttr = function (_n0) {
 		}(
 			author$project$Tuples$joinWithComma(scale)));
 };
-var author$project$Transforms$transitionString = function (transition) {
+var author$project$Transforms$transitionToStr = function (transition) {
 	if (transition.$ === 'Fast') {
 		return 'transition-fast';
 	} else {
@@ -6404,7 +6479,7 @@ var author$project$Transforms$scaleGroup = F3(
 				[
 					author$project$Transforms$scaleAttr(transform_),
 					elm$svg$Svg$Attributes$class(
-					author$project$Transforms$transitionString(transition))
+					author$project$Transforms$transitionToStr(transition))
 				]),
 			_List_fromArray(
 				[svg_]));
@@ -6424,7 +6499,7 @@ var author$project$Transforms$translateGroup = F3(
 				[
 					author$project$Transforms$translateAttr(transform_.translate),
 					elm$svg$Svg$Attributes$class(
-					author$project$Transforms$transitionString(transition))
+					author$project$Transforms$transitionToStr(transition))
 				]),
 			_List_fromArray(
 				[svg_]));

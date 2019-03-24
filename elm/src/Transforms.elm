@@ -25,8 +25,8 @@ type Transition
     | Fast
 
 
-transitionString : Transition -> String
-transitionString transition =
+transitionToStr : Transition -> String
+transitionToStr transition =
     case transition of
         Fast ->
             "transition-fast"
@@ -131,7 +131,7 @@ translateGroup : Transform -> Transition -> Svg msg -> Svg msg
 translateGroup transform_ transition svg_ =
     g
         [ translateAttr transform_.translate
-        , class <| transitionString transition
+        , class <| transitionToStr transition
         ]
         [ svg_ ]
 
@@ -140,6 +140,6 @@ scaleGroup : Transform -> Transition -> Svg msg -> Svg msg
 scaleGroup transform_ transition svg_ =
     g
         [ scaleAttr transform_
-        , class <| transitionString transition
+        , class <| transitionToStr transition
         ]
         [ svg_ ]

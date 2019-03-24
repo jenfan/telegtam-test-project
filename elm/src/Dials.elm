@@ -4,7 +4,7 @@ import Points exposing (Point)
 import Ranges exposing (Size, XY, XYRanges)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
-import Transforms exposing (Transform)
+import Transforms exposing (Scale, Transform)
 
 
 type alias Dial =
@@ -20,19 +20,19 @@ init ( width, height ) =
     Dial 5 6 (toFloat width / 5.0) (toFloat height / 6.0)
 
 
-view : Size -> XYRanges -> Transform -> Dial -> Svg msg
-view ( width, height ) ( xRange, yRange ) transform dial =
+view : Size -> XYRanges -> Transform -> Scale -> Dial -> Svg msg
+view ( width, height ) ( xRange, yRange ) transform prescale dial =
     let
         vDivs =
             Ranges.initListFloats dial.yNotchCount height
                 |> List.map Points.initWithX0
-                |> List.map (v width (Points.actualRoundY transform))
+                |> List.map (v width (Points.actualRoundY prescale transform))
                 |> List.concat
 
         hDivs =
             Ranges.initListFloats dial.xNotchCount width
                 |> List.map Points.initWithY0
-                |> List.map (h (Points.actualRoundX transform))
+                |> List.map (h (Points.actualRoundX prescale transform))
     in
     g [ class "dial" ]
         [ g [ class "v" ] vDivs

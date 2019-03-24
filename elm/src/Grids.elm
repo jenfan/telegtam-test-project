@@ -1,4 +1,4 @@
-module Grids exposing (Grid, resize, toggleLine, viewLines)
+module Grids exposing (Grid, pretransformLines, resize, toggleLine, viewLines)
 
 import Dials
 import Lines exposing (Line)
@@ -6,7 +6,7 @@ import MapBoxes exposing (MapBox)
 import Ranges exposing (Range, Size, XY, XYRanges)
 import Svg exposing (..)
 import Svg.Attributes as Attr exposing (..)
-import Transforms exposing (Transform, Transition(..))
+import Transforms exposing (Scale, Transform, Transition(..))
 
 
 type alias Grid a =
@@ -14,15 +14,34 @@ type alias Grid a =
         | size : Size
         , margins : Int
         , valuesRange : Maybe XYRanges
+        , pretransformScale : Scale
         , transform : Transform
         , lines : List Line
     }
 
 
+pretransformLines : List Line -> ( List Line, Scale )
+pretransformLines lines =
+    let
+        scale =
+            case Lines.valuesRange lines of
+                Just ( ( x1, x2 ), ( y1, y2 ) ) ->
+                    ( 10000 / x2, 10000 / y2 )
+
+                Nothing ->
+                    ( 1, 1 )
+
+        newLines =
+            lines
+                |> List.map (Lines.transform { scale = scale, translate = ( 0.0, 0.0 ) })
+    in
+    ( newLines, scale )
+
+
 toggleLine : Grid a -> Int -> Grid a
 toggleLine grid lineId =
     let
-        updateLine line =
+        toggle line =
             case line.id == lineId of
                 True ->
                     { line | active = not line.active }
@@ -31,7 +50,7 @@ toggleLine grid lineId =
                     line
 
         lines =
-            List.map updateLine grid.lines
+            List.map toggle grid.lines
 
         valuesRange =
             Lines.valuesRange <| List.filter .active lines
