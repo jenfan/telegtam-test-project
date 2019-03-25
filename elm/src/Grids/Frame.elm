@@ -67,8 +67,6 @@ view ({ size } as frame) =
                 , viewBoxAttr frame.size frame.margins
                 , preserveAspectRatio "none"
                 , class "frame"
-
-                --, viewBox <| Transforms.viewbox frame.valuesRange frame.size
                 ]
                 [ viewDial frame
                 , viewLines frame

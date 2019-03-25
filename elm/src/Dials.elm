@@ -23,15 +23,13 @@ init ( width, height ) ( x1, x2 ) =
         xNotchCount =
             round (1 / (x2 - x1))
                 * 5
-                --|> round
-                |> Debug.log "count"
     in
     Dial xNotchCount 6 scaledFrameWidth
 
 
 update : Size -> Range -> Dial -> Dial
 update ( width, _ ) ( x1, x2 ) dial =
-    if toFloat width / (x2 - x1) - toFloat dial.scaledFrameWidth < 0.001 then
+    if abs (toFloat width / (x2 - x1) - toFloat dial.scaledFrameWidth) < 0.001 then
         dial
 
     else
@@ -49,7 +47,6 @@ recalc width ( x1, x2 ) dial =
                 * 5
     in
     { dial | xNotchCount = xNotchCount, scaledFrameWidth = scaledFrameWidth }
-        |> Debug.log "recalced"
 
 
 viewX : Size -> Range -> Transform -> Scale -> Dial -> Svg msg

@@ -20,9 +20,9 @@ type alias MapBox =
 
 
 type Msg
-    = Moved Float
-    | LeftBoundMoved Float
-    | RightBoundMoved Float
+    = Moved ( String, Float )
+    | LeftBoundMoved ( String, Float )
+    | RightBoundMoved ( String, Float )
 
 
 init : Size -> String -> MapBox
@@ -48,13 +48,13 @@ init ( width, height ) id =
     }
 
 
-port boxMoved : (Float -> msg) -> Sub msg
+port boxMoved : (( String, Float ) -> msg) -> Sub msg
 
 
-port leftBoundMoved : (Float -> msg) -> Sub msg
+port leftBoundMoved : (( String, Float ) -> msg) -> Sub msg
 
 
-port rightBoundMoved : (Float -> msg) -> Sub msg
+port rightBoundMoved : (( String, Float ) -> msg) -> Sub msg
 
 
 calcBoxWidth : Float -> Float
@@ -74,56 +74,68 @@ calcPosition width leftX rightX =
 update : Msg -> MapBox -> MapBox
 update msg ({ mapWidth, width, x1, x2, dx } as mapBox) =
     case msg of
-        Moved dX ->
-            -- leftbound position
-            if x1 + dX < 5 then
-                { mapBox
-                    | dx = x1 * -1 + 5
+        Moved ( id, dX ) ->
+            if id == mapBox.id then
+                -- leftbound position
+                if x1 + dX < 5 then
+                    { mapBox
+                        | dx = x1 * -1 + 5
 
-                    --, position = calcPosition mapWidth 0 mapBox.width
-                }
-                    |> updatePosition
-                -- rightbound position
+                        --, position = calcPosition mapWidth 0 mapBox.width
+                    }
+                        |> updatePosition
+                    -- rightbound position
 
-            else if x2 + dX > mapWidth then
-                { mapBox | dx = mapWidth - x2 }
-                    --| position = calcPosition mapWidth (mapWidth - width) mapWidth
-                    --}
-                    |> updatePosition
-                -- working middle position
+                else if x2 + dX > mapWidth then
+                    { mapBox | dx = mapWidth - x2 }
+                        --| position = calcPosition mapWidth (mapWidth - width) mapWidth
+                        --}
+                        |> updatePosition
+                    -- working middle position
 
-            else
-                { mapBox
-                    | dx = dX
+                else
+                    { mapBox
+                        | dx = dX
 
-                    --, position = calcPosition mapWidth (x1 + dx) (x2 + dx)
-                }
-                    |> updatePosition
-
-        LeftBoundMoved x ->
-            if x + dx < 3 then
-                { mapBox | x1 = 3 - dx }
-
-            else if x < x2 then
-                { mapBox | x1 = x }
-                    |> updatePosition
+                        --, position = calcPosition mapWidth (x1 + dx) (x2 + dx)
+                    }
+                        |> updatePosition
 
             else
-                { mapBox | x2 = x }
-                    |> updatePosition
+                mapBox
 
-        RightBoundMoved x ->
-            if x + dx > mapWidth then
-                { mapBox | x2 = mapWidth - dx }
-                    |> updatePosition
+        LeftBoundMoved ( id, x ) ->
+            if id == mapBox.id then
+                if x + dx < 3 then
+                    { mapBox | x1 = 3 - dx }
 
-            else if x > x1 then
-                { mapBox | x2 = x }
-                    |> updatePosition
+                else if x < x2 then
+                    { mapBox | x1 = x }
+                        |> updatePosition
+
+                else
+                    { mapBox | x2 = x }
+                        |> updatePosition
 
             else
-                { mapBox | x1 = x }
-                    |> updatePosition
+                mapBox
+
+        RightBoundMoved ( id, x ) ->
+            if id == mapBox.id then
+                if x + dx > mapWidth then
+                    { mapBox | x2 = mapWidth - dx }
+                        |> updatePosition
+
+                else if x > x1 then
+                    { mapBox | x2 = x }
+                        |> updatePosition
+
+                else
+                    { mapBox | x1 = x }
+                        |> updatePosition
+
+            else
+                mapBox
 
 
 updatePosition : MapBox -> MapBox

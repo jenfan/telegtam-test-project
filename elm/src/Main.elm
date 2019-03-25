@@ -13,43 +13,63 @@ import Svg.Attributes exposing (..)
 
 
 type Msg
-    = ChartMsg Charts.Msg
+    = ChartMsg Int Charts.Msg
     | WindowResized Size
 
 
-init : Size -> ( Chart, Cmd Msg )
+init : Size -> ( List Chart, Cmd Msg )
 init size =
     ( Charts.init size, Cmd.none )
 
 
-view : Chart -> List (Html Msg)
-view grid =
-    [ Html.map ChartMsg (Charts.view grid)
-    ]
+view : List Chart -> List (Html Msg)
+view charts =
+    let
+        viewChart chart =
+            Html.map (ChartMsg chart.id) (Charts.view chart)
+    in
+    charts
+        |> List.map viewChart
 
 
-update : Msg -> Chart -> ( Chart, Cmd Msg )
-update msg chart =
+update : Msg -> List Chart -> ( List Chart, Cmd Msg )
+update msg charts =
     case msg of
-        ChartMsg subMsg ->
-            ( Charts.update subMsg chart, Cmd.none )
+        ChartMsg id subMsg ->
+            let
+                updateChart chart =
+                    if chart.id == id then
+                        Charts.update subMsg chart
+
+                    else
+                        chart
+            in
+            ( List.map updateChart charts, Cmd.none )
 
         WindowResized size ->
-            ( Charts.resize chart size, Cmd.none )
+            let
+                updateChart chart =
+                    Charts.resize chart size
+            in
+            ( List.map updateChart charts, Cmd.none )
 
 
 port windResized : (Size -> msg) -> Sub msg
 
 
-subscriptions : Sub Msg
-subscriptions =
+subscriptions : List Chart -> Sub Msg
+subscriptions charts =
+    let
+        chartSub chart =
+            Sub.map (ChartMsg chart.id) (Charts.subscriptions chart)
+    in
     Sub.batch
         [ windResized WindowResized
-        , Sub.map ChartMsg Charts.subscriptions
+        , Sub.batch (List.map chartSub charts)
         ]
 
 
-main : Program Size Chart Msg
+main : Program Size (List Chart) Msg
 main =
     Browser.document
         { init = init
@@ -57,5 +77,5 @@ main =
             \grid ->
                 { title = "Telegram test chart", body = view grid }
         , update = update
-        , subscriptions = \_ -> subscriptions
+        , subscriptions = subscriptions
         }

@@ -4,7 +4,7 @@ import Data
 import Grids exposing (Grid)
 import Grids.Frame as Frame exposing (Frame)
 import Grids.Map as Map exposing (Map)
-import Html exposing (Html, button, div, span, text)
+import Html exposing (Html, button, div, h1, span, text)
 import Html.Attributes
 import Lines exposing (Line)
 import Ranges exposing (Size)
@@ -17,44 +17,49 @@ type alias Chart =
     { size : Size
     , frame : Frame
     , map : Map
+    , id : Int
     }
 
 
 type Msg
     = ToggleLine Int
-    | MapMsg Map.Msg
+    | MapMsg Int Map.Msg
 
 
-init : Size -> Chart
+init : Size -> List Chart
 init size =
     let
-        id =
-            "123"
+        chartInit : Int -> List Line -> Chart
+        chartInit id lines =
+            let
+                map =
+                    Map.init
+                        { size = mapSize size
+                        , lines = lines
+                        , margins = 20
+                        , id = String.fromInt id
+                        }
 
-        lines =
+                frame =
+                    Frame.init
+                        { size = frameSize size
+                        , lines = lines
+                        , margins = 20
+                        , id = String.fromInt id
+                        , position = map.mapBox.position
+                        }
+            in
+            { map = map
+            , frame = frame
+            , size = size
+            , id = id
+            }
+
+        listLines =
             Data.init
-
-        map =
-            Map.init
-                { size = mapSize size
-                , lines = lines
-                , margins = 20
-                , id = id
-                }
-
-        frame =
-            Frame.init
-                { size = frameSize size
-                , lines = lines
-                , margins = 20
-                , id = id
-                , position = map.mapBox.position
-                }
     in
-    { size = size
-    , frame = frame
-    , map = map
-    }
+    listLines
+        |> List.indexedMap chartInit
 
 
 frameSize : Size -> Size
@@ -77,15 +82,19 @@ update msg chart =
                 , map = Grids.toggleLine chart.map id
             }
 
-        MapMsg subMsg ->
-            let
-                map =
-                    Map.update subMsg chart.map
+        MapMsg id subMsg ->
+            if chart.id == id then
+                let
+                    map =
+                        Map.update subMsg chart.map
 
-                frame =
-                    Frame.updatePosition map.mapBox.position chart.frame
-            in
-            { chart | map = map, frame = frame }
+                    frame =
+                        Frame.updatePosition map.mapBox.position chart.frame
+                in
+                { chart | map = map, frame = frame }
+
+            else
+                chart
 
 
 resize : Chart -> Size -> Chart
@@ -97,9 +106,9 @@ resize chart size =
     }
 
 
-subscriptions : Sub Msg
-subscriptions =
-    Sub.map MapMsg Map.subscriptions
+subscriptions : Chart -> Sub Msg
+subscriptions chart =
+    Sub.map (MapMsg chart.id) Map.subscriptions
 
 
 
@@ -109,8 +118,9 @@ subscriptions =
 view : Chart -> Html Msg
 view chart =
     div []
-        [ Frame.view chart.frame
-        , Html.map MapMsg (Map.view chart.map)
+        [ h1 [ style "padding: 40px; font-size: 40pt" ] [ text <| "Chart " ++ String.fromInt chart.id ]
+        , Frame.view chart.frame
+        , Html.map (MapMsg chart.id) (Map.view chart.map)
         , viewLineBtns chart.map.lines
         ]
 

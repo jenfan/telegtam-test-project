@@ -11,7 +11,8 @@ function make_draggable(app) {
         ctm,
         clickedSvgX,
         draggingEle,
-        offsetX;
+        offsetX,
+        chartId;
 
     function getMouseX(evt) {
       if (evt.touches) { evt = evt.touches[0]; }
@@ -21,6 +22,7 @@ function make_draggable(app) {
     function startDrag(evt) {
       if (evt.target.className.baseVal == "mapBox"){
         selectedElement = evt.target;
+        chartId = selectedElement.getAttribute('id');
         startMouseX = getMouseX(evt);
         boxTranslatedX = parseFloat(selectedElement.getAttribute('dragx')) || 0;
         x = parseFloat(selectedElement.getAttribute('x'));
@@ -43,15 +45,15 @@ function make_draggable(app) {
       if (selectedElement != undefined) {
         if (draggingEle == 'box'){
           dx = startMouseX - getMouseX(evt);
-          app.ports.boxMoved.send(boxTranslatedX - dx);
+          app.ports.boxMoved.send([chartId, boxTranslatedX - dx]);
         }
         if (draggingEle == 'leftBound'){
           dx = startMouseX -  getMouseX(evt);
-          app.ports.leftBoundMoved.send(clickedSvgX - offsetX - dx);
+          app.ports.leftBoundMoved.send([chartId, clickedSvgX - offsetX - dx]);
         }
         if (draggingEle == 'rightBound'){
           dx = startMouseX - getMouseX(evt);
-          app.ports.rightBoundMoved.send(clickedSvgX - dx);
+          app.ports.rightBoundMoved.send([chartId, clickedSvgX - dx]);
         }
 
       }
